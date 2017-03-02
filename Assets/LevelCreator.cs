@@ -48,8 +48,12 @@ public class LevelCreator : MonoBehaviour {
 
 	public Color mainRoomColor;
 
-	private List<LineSegment> m_delaunayTriangulation;
-	private List<LineSegment> m_spanningTree;
+	private List<LineSegment> m_delaunayTriangulation,
+		m_spanningTree,
+		corridors;
+
+	public float chanceToAddExtraCorridor = 0.1f;
+
 
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = minWidth + (widthVarience / 2);
@@ -114,9 +118,17 @@ public class LevelCreator : MonoBehaviour {
 		Delaunay.Voronoi v = new Delaunay.Voronoi (mainRoomPoints.ToList (), colors, new Rect (0, 0, 100, 50));
 		m_delaunayTriangulation = v.DelaunayTriangulation ();
 		m_spanningTree = v.SpanningTree (KruskalType.MINIMUM);
+		corridors = m_spanningTree;
+		for (int i = 0; i < m_delaunayTriangulation.Count; i++) {
+			if (Random.value < chanceToAddExtraCorridor) {
+				corridors.Add(m_delaunayTriangulation[i]);
+			}
+		}
 
+		corridors = corridors.Distinct ().ToList();
 			
 	}
+
 
 	void OnDrawGizmos() {
 		if (mainRoomPoints == null) {
@@ -126,18 +138,28 @@ public class LevelCreator : MonoBehaviour {
 			Gizmos.DrawSphere (point, 1f);
 		}
 
-		Gizmos.color = Color.magenta;
-		if (m_delaunayTriangulation != null) {
-			for (int i = 0; i< m_delaunayTriangulation.Count; i++) {
-				Vector2 left = (Vector2)m_delaunayTriangulation [i].p0;
-				Vector2 right = (Vector2)m_delaunayTriangulation [i].p1;
-				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
-			}
-		}
+//		Gizmos.color = Color.magenta;
+//		if (m_delaunayTriangulation != null) {
+//			for (int i = 0; i< m_delaunayTriangulation.Count; i++) {
+//				Vector2 left = (Vector2)m_delaunayTriangulation [i].p0;
+//				Vector2 right = (Vector2)m_delaunayTriangulation [i].p1;
+//				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+//			}
+//		}
 		if (m_spanningTree != null) {
 			Gizmos.color = Color.green;
 			for (int i = 0; i< m_spanningTree.Count; i++) {
 				LineSegment seg = m_spanningTree [i];				
+				Vector2 left = (Vector2)seg.p0;
+				Vector2 right = (Vector2)seg.p1;
+				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+			}
+		}
+
+		if (corridors != null) {
+			Gizmos.color = Color.yellow;
+			for (int i = 0; i< corridors.Count; i++) {
+				LineSegment seg = corridors [i];				
 				Vector2 left = (Vector2)seg.p0;
 				Vector2 right = (Vector2)seg.p1;
 				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
