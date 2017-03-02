@@ -21,3 +21,4 @@
 /Users/jcarrington/Documents/Games/Wall Jump Prototypes/Temp/bin/Debug/Mono.Cecil.Mdb.dll
 /Users/jcarrington/Documents/Games/Wall Jump Prototypes/Temp/bin/Debug/UnityEngine.TestRunner.dll
 /Users/jcarrington/Documents/Games/Wall Jump Prototypes/Temp/bin/Debug/nunit.framework.dll
+/Users/jcarrington/Documents/Games/Wall Jump Prototypes/Temp/bin/Debug/AS3DelaunayExtended.dll

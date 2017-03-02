@@ -46,7 +46,8 @@ public class LevelCreator : MonoBehaviour {
 	public GameObject defaultRoom;
 	Vector2[] mainRoomPoints;
 
-	public Color mainRoomColor;
+	public Color mainRoomColor,
+		connectingRoomColor;
 
 	private List<LineSegment> m_delaunayTriangulation,
 		m_spanningTree,
@@ -64,10 +65,10 @@ public class LevelCreator : MonoBehaviour {
 			int wv = Random.Range (0, widthVarience);
 			int hv = Random.Range (0, heightVarience);
 			// only round numbers please
-			if (wv % 2 != 0) {
+			if (wv % 2 == 0) {
 				wv++;
 			}
-			if (hv % 2 != 0) {
+			if (hv % 2 == 0) {
 				hv++;
 			}
 			GameObject newRoom = GameObject.Instantiate (defaultRoom);
@@ -87,6 +88,7 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 		}
+
 		Time.fixedDeltaTime = 0.02f;
 		print ("all asleep at " + Time.time);
 		// Round positions of rooms to int and get 'main rooms'?
@@ -96,8 +98,6 @@ public class LevelCreator : MonoBehaviour {
 			Vector2 newPos = room.transform.position;
 			newPos.x = Mathf.RoundToInt (newPos.x);
 			newPos.y = Mathf.RoundToInt (newPos.y);
-			newPos.x += 0.5f;
-			newPos.y += 0.5f;
 			room.transform.position = newPos;
 			if (room.transform.localScale.x > (meanWidth * 1.1f) && room.transform.localScale.y > (meanHeight * 1.1f)) {
 				room.GetComponent<SpriteRenderer> ().color = mainRoomColor;
@@ -126,6 +126,32 @@ public class LevelCreator : MonoBehaviour {
 		}
 
 		corridors = corridors.Distinct ().ToList();
+		// For each corridor, add connections. TODO: This is a dumb
+		for (int i = 0; i < corridors.Count; i++) {
+			LineSegment c = corridors [i];
+			Vector2 start = (Vector2)c.p0;
+			Vector2 end = (Vector2)c.p1;
+			GameObject startRoom = GetRoomAtCoords (start);
+			GameObject endRoom = GetRoomAtCoords (end);
+			startRoom.GetComponent<BaseRoomController> ().AddConnection (endRoom);
+		}
+
+		// Try to create corridors
+		foreach (GameObject room in rooms) {
+			List<GameObject> connections = room.GetComponent<BaseRoomController> ().GetConnections ();
+			for (int i = 0; i < connections.Count; i++) {
+				RaycastHit2D[] hits = Physics2D.LinecastAll (
+                  room.GetComponent<BaseRoomController> ().GetCoords (),
+                  connections [i].GetComponent<BaseRoomController> ().GetCoords ()
+				);
+				foreach (RaycastHit2D hit in hits) {
+					// Make sure this is not the starting or ending room
+					if (hit.transform.gameObject != room && hit.transform.gameObject != connections [i]) {
+						hit.transform.gameObject.GetComponent<SpriteRenderer> ().color = connectingRoomColor;
+					}
+				}
+			}
+		}
 			
 	}
 
@@ -165,6 +191,15 @@ public class LevelCreator : MonoBehaviour {
 				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
 			}
 		}
+	}
+
+	GameObject GetRoomAtCoords(Vector2 coords) {
+		foreach (GameObject room in rooms) {
+			if (room.GetComponent<BaseRoomController> ().GetCoords () == coords) {
+				return room;
+			}
+		}
+		return null;
 	}
 
 }
