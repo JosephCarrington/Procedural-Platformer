@@ -205,8 +205,9 @@ public class LevelCreator : MonoBehaviour {
 			}
 		}
 		foreach (GameObject room in rooms) {
-			if (room.layer != LayerMask.NameToLayer ("UnunsedRoom")) {
+			if (room.layer != LayerMask.NameToLayer ("UnusedRoom")) {
 				finalRooms.Add (GameObject.Instantiate (room));
+				print ("Adding room to final");
 			}
 			GameObject.Destroy (room);
 		}
