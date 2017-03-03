@@ -20,8 +20,10 @@ public class LevelCreator : MonoBehaviour {
 
 	public int roomCount = 100;
 	GameObject[] rooms;
+	List<GameObject> finalRooms;
 	void Start () {
 		tiles = new GameObject[levelWidth, levelHeight];
+		finalRooms = new List<GameObject> ();
 //		FillLevelWithWalls ();
 		StartCoroutine(CreateRooms(roomCount));
 
@@ -47,7 +49,8 @@ public class LevelCreator : MonoBehaviour {
 	Vector2[] mainRoomPoints;
 
 	public Color mainRoomColor,
-		connectingRoomColor;
+		connectingRoomColor,
+		corridorColor;
 
 	private List<LineSegment> m_delaunayTriangulation,
 		m_spanningTree,
@@ -74,6 +77,7 @@ public class LevelCreator : MonoBehaviour {
 			GameObject newRoom = GameObject.Instantiate (defaultRoom);
 			newRoom.transform.position = Random.insideUnitCircle * 100;
 			newRoom.transform.localScale = new Vector3 (minWidth + wv, minHeight + hv, 1);
+			newRoom.layer = LayerMask.NameToLayer ("UnusedRoom");
 			rooms [i] = newRoom;
 		}
 
@@ -101,6 +105,8 @@ public class LevelCreator : MonoBehaviour {
 			room.transform.position = newPos;
 			if (room.transform.localScale.x > (meanWidth * 1.1f) && room.transform.localScale.y > (meanHeight * 1.1f)) {
 				room.GetComponent<SpriteRenderer> ().color = mainRoomColor;
+				room.layer = LayerMask.NameToLayer ("MainRoom");
+				room.name = "Main Room";
 				mainRooms.Add (room);
 			}
 		}
@@ -149,16 +155,41 @@ public class LevelCreator : MonoBehaviour {
 				// Check X coords
 				Vector3 midPoint = (startCoords + endCoords) / 2;
 				midPoints.Add (midPoint);
-				Rect startRect = new Rect (startCoords.x, startCoords.y, startScale.x, startScale.y);
-				Rect endRect = new Rect (endCoords.x, endCoords.y, endScale.x, endScale.y);
 
-				if(startRect.Contains(new Vector2(midPoint.x, startRect.x))) {
-					print("point exists in start rect");
-					if (endRect.Contains (new Vector2 (midPoint.x, endRect.x))) {
-						print ("point also exists in end rect");
+				// I was doing rects wrong, no longer!
+				Rect startRect = GetRect(room.transform);
+				Rect endRect = GetRect (connections [i].transform);
+
+				// let's try drawing a line
+				bool createdCorridor = false;
+				Vector2 lineStart = new Vector2 (midPoint.x, startCoords.y),
+				lineEnd = new Vector2 (midPoint.x, endCoords.y);
+				// Vertical Corridor
+				if (startRect.Contains (lineStart) && endRect.Contains (lineEnd)) {
+					CreateCorridor (lineStart, lineEnd);
+					createdCorridor = true;
+				}
+				// Horizontal Corridor
+				if (!createdCorridor) {
+					lineStart = new Vector2 (startCoords.x, midPoint.y);
+					lineEnd = new Vector2 (endCoords.x, midPoint.y);
+					if (startRect.Contains (lineStart) && endRect.Contains (lineEnd)) {
+						CreateCorridor (lineStart, lineEnd);
+						createdCorridor = true;
 					}
 				}
-
+				// L Corridor
+				if (!createdCorridor) {
+					CreateCorridor (
+						startCoords,
+						new Vector2 (startCoords.x, endCoords.y)
+					);
+					CreateCorridor (
+						new Vector2 (startCoords.x, endCoords.y),
+						endCoords
+					);
+					createdCorridor = true;
+				}
 					
 
 //				RaycastHit2D[] hits = Physics2D.LinecastAll (
@@ -173,6 +204,13 @@ public class LevelCreator : MonoBehaviour {
 //				}
 			}
 		}
+		foreach (GameObject room in rooms) {
+			if (room.layer != LayerMask.NameToLayer ("UnunsedRoom")) {
+				finalRooms.Add (GameObject.Instantiate (room));
+			}
+			GameObject.Destroy (room);
+		}
+
 			
 	}
 
@@ -181,10 +219,10 @@ public class LevelCreator : MonoBehaviour {
 		if (mainRoomPoints == null) {
 			return;
 		}
-		foreach (Vector2 point in mainRoomPoints) {
-			Gizmos.DrawSphere (point, 1f);
-		}
-
+//		foreach (Vector2 point in mainRoomPoints) {
+//			Gizmos.DrawSphere (point, 1f);
+//		}
+//
 //		Gizmos.color = Color.magenta;
 //		if (m_delaunayTriangulation != null) {
 //			for (int i = 0; i< m_delaunayTriangulation.Count; i++) {
@@ -193,31 +231,31 @@ public class LevelCreator : MonoBehaviour {
 //				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
 //			}
 //		}
-		if (m_spanningTree != null) {
-			Gizmos.color = Color.green;
-			for (int i = 0; i< m_spanningTree.Count; i++) {
-				LineSegment seg = m_spanningTree [i];				
-				Vector2 left = (Vector2)seg.p0;
-				Vector2 right = (Vector2)seg.p1;
-				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
-			}
-		}
-
-		if (corridors != null) {
-			Gizmos.color = Color.yellow;
-			for (int i = 0; i< corridors.Count; i++) {
-				LineSegment seg = corridors [i];				
-				Vector2 left = (Vector2)seg.p0;
-				Vector2 right = (Vector2)seg.p1;
-				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
-			}
-		}
-		if (midPoints != null) {
-			Gizmos.color = Color.white;
-			for (int i = 0; i < midPoints.Count; i++) {
-				Gizmos.DrawSphere (midPoints [i], 2f);
-			}
-		}
+//		if (m_spanningTree != null) {
+//			Gizmos.color = Color.green;
+//			for (int i = 0; i< m_spanningTree.Count; i++) {
+//				LineSegment seg = m_spanningTree [i];				
+//				Vector2 left = (Vector2)seg.p0;
+//				Vector2 right = (Vector2)seg.p1;
+//				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+//			}
+//		}
+//
+//		if (corridors != null) {
+//			Gizmos.color = Color.yellow;
+//			for (int i = 0; i< corridors.Count; i++) {
+//				LineSegment seg = corridors [i];				
+//				Vector2 left = (Vector2)seg.p0;
+//				Vector2 right = (Vector2)seg.p1;
+//				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+//			}
+//		}
+//		if (midPoints != null) {
+//			Gizmos.color = Color.white;
+//			for (int i = 0; i < midPoints.Count; i++) {
+//				Gizmos.DrawSphere (midPoints [i], 2f);
+//			}
+//		}
 	}
 
 	GameObject GetRoomAtCoords(Vector2 coords) {
@@ -227,6 +265,48 @@ public class LevelCreator : MonoBehaviour {
 			}
 		}
 		return null;
+	}
+
+	Rect GetRect(Transform t) {
+		return new Rect (
+			t.position.x - t.localScale.x / 2,
+			t.position.y - t.localScale.y / 2,
+			t.localScale.x,
+			t.localScale.y
+		);
+	}
+
+	void CreateCorridor(Vector2 start, Vector2 end) {
+		Debug.DrawLine (start, end, Color.cyan, Mathf.Infinity);
+		Vector2 midPoint = (start + end) / 2;
+		GameObject corridor = GameObject.Instantiate (defaultRoom);
+		corridor.GetComponent<Rigidbody2D> ().isKinematic = true;
+		corridor.name = "Corridor";
+		corridor.transform.position = midPoint;
+		corridor.GetComponent<SpriteRenderer> ().color = corridorColor;
+		corridor.layer = LayerMask.NameToLayer ("Corridor");
+
+		if (start.x == end.x) {
+			corridor.transform.position = new Vector2 (start.x, midPoint.y);
+
+			corridor.transform.localScale = new Vector2 (3, Vector2.Distance(start, end));
+		}
+		if (start.y == end.y) {
+			corridor.transform.position = new Vector2 (midPoint.x, start.y);
+			corridor.transform.localScale = new Vector2 (Vector2.Distance(start, end), 3);
+
+		}
+
+//		Collider2D[] hits = Physics2D.OverlapAreaAll (start, end, 1 << LayerMask.NameToLayer("ConnectingRoom"));
+		RaycastHit2D[] hits = Physics2D.LinecastAll(start, end, 1 << LayerMask.NameToLayer("UnusedRoom"));
+		foreach (RaycastHit2D hit in hits) {
+			// Layermask does not work?
+			if (hit.transform.gameObject.layer != LayerMask.NameToLayer ("UnusedRoom")) {
+				continue;
+			}
+			hit.transform.gameObject.GetComponent<SpriteRenderer> ().color = connectingRoomColor;
+			hit.transform.gameObject.layer = LayerMask.NameToLayer ("ConnectingRoom");
+		}
 	}
 
 }
