@@ -204,17 +204,57 @@ public class LevelCreator : MonoBehaviour {
 //				}
 			}
 		}
+		Rect levelBounds = new Rect ();
+
 		foreach (GameObject room in rooms) {
 			if (room.layer != LayerMask.NameToLayer ("UnusedRoom")) {
-				finalRooms.Add (GameObject.Instantiate (room));
+				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
+				finalRooms.Add (GameObject.Instantiate (room, gameObject.transform));
 				print ("Adding room to final");
+				Rect roomRect = GetRect (room.transform);
+				if (roomRect.xMin < levelBounds.xMin) {
+					levelBounds.xMin = roomRect.xMin;
+				}
+				if (roomRect.xMax > levelBounds.xMax) {
+					levelBounds.xMax = roomRect.xMax;
+				}
+				if (roomRect.yMin < levelBounds.yMin) {
+					levelBounds.yMin = roomRect.yMin;
+				}
+				if (roomRect.yMax > levelBounds.yMax) {
+					levelBounds.yMax = roomRect.yMax;
+				}
+
 			}
 			GameObject.Destroy (room);
 		}
 
+		foreach (Transform child in transform) {
+			child.GetComponent<SpriteRenderer> ().enabled = false;
+		}
+
+		levelBounds.xMin -= 1;
+		levelBounds.xMax += 1;
+		levelBounds.yMin -= 1;
+		levelBounds.yMax += 1;
+		print (levelBounds.ToString ());
+
+		gameObject.GetComponent<CompositeCollider2D> ().GenerateGeometry ();
+
+
+//		Create a blank grid
+//		for (float x = 0; x < levelBounds.width; x++) {
+//			for (float y = 0; y < levelBounds.height; y++) {
+//				Vector2 pointToCheck = new Vector2 (levelBounds.xMin + x, levelBounds.yMin + y);
+//				if (Physics2D.OverlapPoint (pointToCheck)) {
+//					print ("no wall here");
+//				} else {
+//					print ("make a wall here");
+//				}
+//			}
+//		}
 			
 	}
-
 
 	void OnDrawGizmos() {
 		if (mainRoomPoints == null) {
@@ -280,7 +320,8 @@ public class LevelCreator : MonoBehaviour {
 	void CreateCorridor(Vector2 start, Vector2 end) {
 		Debug.DrawLine (start, end, Color.cyan, Mathf.Infinity);
 		Vector2 midPoint = (start + end) / 2;
-		GameObject corridor = GameObject.Instantiate (defaultRoom);
+		GameObject corridor = GameObject.Instantiate (defaultRoom, gameObject.transform);
+		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
 		corridor.GetComponent<Rigidbody2D> ().isKinematic = true;
 		corridor.name = "Corridor";
 		corridor.transform.position = midPoint;
