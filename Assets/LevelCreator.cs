@@ -55,7 +55,7 @@ public class LevelCreator : MonoBehaviour {
 
 	public float chanceToAddExtraCorridor = 0.1f;
 
-
+	List<Vector2> midPoints;
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = minWidth + (widthVarience / 2);
 		meanHeight = minHeight + (heightVarience / 2);
@@ -137,19 +137,40 @@ public class LevelCreator : MonoBehaviour {
 		}
 
 		// Try to create corridors
+		midPoints = new List<Vector2>();
 		foreach (GameObject room in rooms) {
 			List<GameObject> connections = room.GetComponent<BaseRoomController> ().GetConnections ();
 			for (int i = 0; i < connections.Count; i++) {
-				RaycastHit2D[] hits = Physics2D.LinecastAll (
-                  room.GetComponent<BaseRoomController> ().GetCoords (),
-                  connections [i].GetComponent<BaseRoomController> ().GetCoords ()
-				);
-				foreach (RaycastHit2D hit in hits) {
-					// Make sure this is not the starting or ending room
-					if (hit.transform.gameObject != room && hit.transform.gameObject != connections [i]) {
-						hit.transform.gameObject.GetComponent<SpriteRenderer> ().color = connectingRoomColor;
+				// First see if we can create a straight connection
+				Vector2 startCoords = room.GetComponent<BaseRoomController>().GetCoords();
+				Vector2 startScale = room.transform.localScale;
+				Vector2 endCoords = connections[i].GetComponent<BaseRoomController>().GetCoords();
+				Vector2 endScale = connections [i].transform.localScale;
+				// Check X coords
+				Vector3 midPoint = (startCoords + endCoords) / 2;
+				midPoints.Add (midPoint);
+				Rect startRect = new Rect (startCoords.x, startCoords.y, startScale.x, startScale.y);
+				Rect endRect = new Rect (endCoords.x, endCoords.y, endScale.x, endScale.y);
+
+				if(startRect.Contains(new Vector2(midPoint.x, startRect.x))) {
+					print("point exists in start rect");
+					if (endRect.Contains (new Vector2 (midPoint.x, endRect.x))) {
+						print ("point also exists in end rect");
 					}
 				}
+
+					
+
+//				RaycastHit2D[] hits = Physics2D.LinecastAll (
+//                  room.GetComponent<BaseRoomController> ().GetCoords (),
+//                  connections [i].GetComponent<BaseRoomController> ().GetCoords ()
+//				);
+//				foreach (RaycastHit2D hit in hits) {
+//					// Make sure this is not the starting or ending room
+//					if (hit.transform.gameObject != room && hit.transform.gameObject != connections [i]) {
+//						hit.transform.gameObject.GetComponent<SpriteRenderer> ().color = connectingRoomColor;
+//					}
+//				}
 			}
 		}
 			
@@ -189,6 +210,12 @@ public class LevelCreator : MonoBehaviour {
 				Vector2 left = (Vector2)seg.p0;
 				Vector2 right = (Vector2)seg.p1;
 				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+			}
+		}
+		if (midPoints != null) {
+			Gizmos.color = Color.white;
+			for (int i = 0; i < midPoints.Count; i++) {
+				Gizmos.DrawSphere (midPoints [i], 2f);
 			}
 		}
 	}
