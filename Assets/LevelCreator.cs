@@ -204,10 +204,14 @@ public class LevelCreator : MonoBehaviour {
 //				}
 			}
 		}
-		Rect levelBounds = new Rect ();
-
+		Rect levelBounds = new Rect();
+		bool firstRoomSet = false;
 		foreach (GameObject room in rooms) {
 			if (room.layer != LayerMask.NameToLayer ("UnusedRoom")) {
+				if (!firstRoomSet) {
+					levelBounds = GetRect (room.transform);
+					firstRoomSet = true;
+				}
 				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
 				finalRooms.Add (GameObject.Instantiate (room, gameObject.transform));
 				print ("Adding room to final");
@@ -231,28 +235,29 @@ public class LevelCreator : MonoBehaviour {
 
 		foreach (Transform child in transform) {
 			child.GetComponent<SpriteRenderer> ().enabled = false;
+//			Destroy (child.GetComponent<Rigidbody2D> ());
 		}
 
 		levelBounds.xMin -= 1;
 		levelBounds.xMax += 1;
 		levelBounds.yMin -= 1;
 		levelBounds.yMax += 1;
-		print (levelBounds.ToString ());
 
 		gameObject.GetComponent<CompositeCollider2D> ().GenerateGeometry ();
 
 
 //		Create a blank grid
-//		for (float x = 0; x < levelBounds.width; x++) {
-//			for (float y = 0; y < levelBounds.height; y++) {
-//				Vector2 pointToCheck = new Vector2 (levelBounds.xMin + x, levelBounds.yMin + y);
-//				if (Physics2D.OverlapPoint (pointToCheck)) {
-//					print ("no wall here");
-//				} else {
-//					print ("make a wall here");
-//				}
-//			}
-//		}
+		for (float x = 0; x < levelBounds.width; x++) {
+			for (float y = 0; y < levelBounds.height; y++) {
+				Vector2 pointToCheck = new Vector2 (levelBounds.xMin + x, levelBounds.yMin + y);
+				if (Physics2D.OverlapPoint (pointToCheck)) {
+
+				} else {
+
+//					GameObject.Instantiate (defaultRoom, pointToCheck, Quaternion.identity);
+				}
+			}
+		}
 			
 	}
 
@@ -318,7 +323,6 @@ public class LevelCreator : MonoBehaviour {
 	}
 
 	void CreateCorridor(Vector2 start, Vector2 end) {
-		Debug.DrawLine (start, end, Color.cyan, Mathf.Infinity);
 		Vector2 midPoint = (start + end) / 2;
 		GameObject corridor = GameObject.Instantiate (defaultRoom, gameObject.transform);
 		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
