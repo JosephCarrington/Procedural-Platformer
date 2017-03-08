@@ -11,6 +11,7 @@ public class LevelCreator : MonoBehaviour {
 	// Use this for initialization
 	public tk2dSprite baseWall;
 	public Material pixelSnap;
+	GameObject player;
 
 	enum Tile {
 		Blank,
@@ -31,7 +32,8 @@ public class LevelCreator : MonoBehaviour {
 	void Start () {
 		finalRooms = new List<GameObject> ();
 		map = GameObject.Find ("TileMap").GetComponent<TileMapController> ();
-//		FillLevelWithWalls ();
+		player = GameObject.Find ("Player");
+		player.gameObject.SetActive (false);
 		StartCoroutine(CreateRooms(roomCount));
 	}
 	
@@ -226,7 +228,6 @@ public class LevelCreator : MonoBehaviour {
 
 		foreach (Transform child in transform) {
 			child.GetComponent<SpriteRenderer> ().enabled = false;
-//			Destroy (child.GetComponent<Rigidbody2D> ());
 		}
 
 		levelBounds.xMin -= 1;
@@ -239,9 +240,17 @@ public class LevelCreator : MonoBehaviour {
 		foreach (Transform child in transform) {
 //			WallInRoom (child.gameObject);
 			CarveOutRoom(child.gameObject);
+			Destroy (child.GetComponent<Rigidbody2D> ());
+			Destroy (child.GetComponent<BoxCollider2D> ());
+
 
 		}
+
 		map.Build ();
+		player.SetActive (true);
+		player.transform.position = transform.GetChild (0).position;
+		Camera.main.GetComponent<CameraController> ().enabled = true;
+
 	}
 
 	public Vector3 mapSize = Vector3.one * 256;
