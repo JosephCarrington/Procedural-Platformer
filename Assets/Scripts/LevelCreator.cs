@@ -236,7 +236,6 @@ public class LevelCreator : MonoBehaviour {
 		levelBounds.xMax += 1;
 		levelBounds.yMin -= 1;
 		levelBounds.yMax += 1;
-		Debug.DrawLine (levelBounds.min, levelBounds.max, Color.red, Mathf.Infinity);
 
 //		tiles = new Tile[mapSize.x, mapSize.y];
 		foreach (Transform child in transform) {
@@ -279,6 +278,8 @@ public class LevelCreator : MonoBehaviour {
 	}
 
 	public Vector3 mapSize = Vector3.one * 256;
+	public GameObject coin;
+	public float chanceToSpawnCoin = 0.01f;
 
 	void CarveOutRoom(GameObject room) {
 //		Rect bounds = GetRect (room.transform);
@@ -287,9 +288,22 @@ public class LevelCreator : MonoBehaviour {
 		Vector3 topRight = room.transform.position;
 		bottomLeft -= room.transform.lossyScale / 2;
 		topRight += room.transform.lossyScale / 2;
+
+		// Coins
+		for (int x = (int)bottomLeft.x; x < (int)topRight.x; x++) {
+			for (int y = (int)bottomLeft.y; y < (int)topRight.y; y++) {	
+				if (Random.value < chanceToSpawnCoin) {
+					GameObject newCoin = GameObject.Instantiate (coin, new Vector3 (x, y, -1), Quaternion.identity);
+				}
+			}
+		}
+
+
 		bottomLeft += mapSize / 2;
 		topRight += mapSize / 2;
 		map.CarveOutRoom (bottomLeft, topRight);
+
+
 		
 	}
 		

@@ -1,4 +1,8 @@
-﻿namespace Utils {
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Utils {
 	public class Coordinates {
 		public int x, y;
 		public Coordinates(int x, int y) {
@@ -6,7 +10,7 @@
 			this.y = y;
 		}
 
-		public string ToString() {
+		public override string ToString() {
 			return "[" + this.x + "," + this.y + "]";
 		}
 			

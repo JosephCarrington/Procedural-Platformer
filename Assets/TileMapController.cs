@@ -36,10 +36,8 @@ public class TileMapController : MonoBehaviour {
 		case 5:
 		case 6:
 			return true;
-			break;
 		default:
 			return false;
-			break;
 		}
 	}
 
