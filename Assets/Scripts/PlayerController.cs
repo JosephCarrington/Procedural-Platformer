@@ -119,7 +119,6 @@ public class PlayerController : MonoBehaviour {
 
 	public float stamina = 40f;
 	void OnCollisionEnter2D(Collision2D col) {
-		print (col.relativeVelocity.magnitude);
 		if (col.relativeVelocity.magnitude > stamina) {
 			Die ();
 		}

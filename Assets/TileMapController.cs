@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 public class TileMapController : MonoBehaviour {
 
@@ -22,6 +23,23 @@ public class TileMapController : MonoBehaviour {
 			for (int y = 0; y < map.width; y++) {
 				map.SetTile (x, y, 0, Random.Range(4, 7));
 			}
+		}
+	}
+
+	public bool IsWallAtCoords(Coordinates coords) {
+		if (coords.x < 0 || coords.x >= map.width || coords.y < 0 || coords.y >= map.height) {
+			throw new UnityException ("Coords out of bounds : " + coords.ToString());
+		}
+		int wall = map.GetTile (coords.x, coords.y, 0);
+		switch (wall) {
+		case 4:
+		case 5:
+		case 6:
+			return true;
+			break;
+		default:
+			return false;
+			break;
 		}
 	}
 
