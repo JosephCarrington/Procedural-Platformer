@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using Utils;
+
 using Delaunay;
 using Delaunay.Geo;
 
@@ -248,10 +250,28 @@ public class LevelCreator : MonoBehaviour {
 
 		map.Build ();
 		player.SetActive (true);
-		player.transform.position = transform.GetChild (0).position;
+
+		Vector2 roomOnePos = transform.GetChild (0).position;
+		bool wallUnder = false;
+		Coordinates playerPos = new Coordinates ((int)roomOnePos.x, (int)roomOnePos.y);
+		playerPos.x += (int)mapSize.x / 2;
+		playerPos.y += (int)mapSize.y / 2;
+		int currentYCheck = playerPos.y - 1;
+		while (!wallUnder) {
+			if (map.IsWallAtCoords (new Coordinates(playerPos.x, currentYCheck))) {
+				wallUnder = true;
+			} else {
+				currentYCheck--;
+			}
+		}
+		Vector2 newPlayerPos = new Vector2 (playerPos.x - (mapSize.x / 2), currentYCheck - (mapSize.y / 2) + 1);
+		player.transform.position = newPlayerPos;
+
+
+
 		Vector3 camPos = Camera.main.transform.position;
-		camPos.x = transform.GetChild(0).position.x;
-		camPos.y = transform.GetChild(0).position.y;
+		camPos.x = newPlayerPos.x;
+		camPos.y = newPlayerPos.y;
 
 		Camera.main.transform.position = camPos;
 		Camera.main.GetComponent<CameraController> ().enabled = true;
