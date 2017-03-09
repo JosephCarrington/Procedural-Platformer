@@ -117,6 +117,15 @@ public class PlayerController : MonoBehaviour {
 		return(inputValue - min) / (max - min);
 	}
 
+	public float stamina = 40f;
+	void OnCollisionEnter2D(Collision2D col) {
+		print (col.relativeVelocity.magnitude);
+		if (col.relativeVelocity.magnitude > stamina) {
+			Die ();
+		}
+
+	}
+
 	void Die() {
 		Application.LoadLevel (0);
 	}
