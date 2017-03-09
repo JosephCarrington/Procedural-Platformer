@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour {
 
 	// Use this for initialization
 	GameObject player;
+	Text score;
+
 	void Start () {
 		player = GameObject.Find ("Player");
+		score = GameObject.Find ("Score").GetComponent<Text>();
 	}
 	
 	// Update is called once per frame
@@ -22,5 +26,9 @@ public class CameraController : MonoBehaviour {
 //		transform.position = newPos;
 		newPos = Vector2.SmoothDamp (transform.position, newPos, ref currentVel, smoothTime, Mathf.Infinity, Time.deltaTime);
 		transform.position = new Vector3 (newPos.x, newPos.y, transform.position.z);
+	}
+
+	void SetScore(int newScore) {
+		score.text = newScore.ToString();
 	}
 }

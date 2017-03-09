@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
@@ -125,7 +126,18 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
+	private int score = 0;
+	void Score(int scoreToAdd) {
+		score += scoreToAdd;
+		ShowScore ();
+	}
+
+	void ShowScore() {
+		Camera.main.SendMessage ("SetScore", score);
+	}
+
 	void Die() {
-		Application.LoadLevel (0);
+//		Application.LoadLevel (0);
+		SceneManager.LoadScene(0);
 	}
 }
