@@ -20,7 +20,7 @@ public class TileMapController : MonoBehaviour {
 	void FillWithWalls() {
 		for (int x = 0; x < map.width; x++) {
 			for (int y = 0; y < map.width; y++) {
-				map.SetTile (x, y, 0, 4);
+				map.SetTile (x, y, 0, Random.Range(4, 7));
 			}
 		}
 	}
