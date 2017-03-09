@@ -5,6 +5,7 @@ using UnityEngine;
 public class CheckController : MonoBehaviour {
 
 	// Use this for initialization
+	public LayerMask defaultWalls;
 	void Start () {
 		
 	}
@@ -16,13 +17,9 @@ public class CheckController : MonoBehaviour {
 		
 	public bool Check() {
 		foreach (Transform child in transform) {
-			Collider2D c = Physics2D.OverlapPoint (child.transform.position);
-			if (c == null) {
+			RaycastHit2D h = Physics2D.Raycast (gameObject.transform.position, child.position - gameObject.transform.position, 0.6f, defaultWalls);
+			if (h.transform == null) {
 				continue;
-			}
-
-			if (c.gameObject.tag == "Bad Wall") {
-				gameObject.SendMessageUpwards ("Die");
 			} else {
 				return true;
 			}

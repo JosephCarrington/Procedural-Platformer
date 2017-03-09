@@ -79,7 +79,7 @@ public class LevelCreator : MonoBehaviour {
 				hv++;
 			}
 			GameObject newRoom = GameObject.Instantiate (defaultRoom);
-			newRoom.transform.position = Random.insideUnitCircle * 100;
+			newRoom.transform.position = Random.insideUnitCircle * (mapSize.x / 4);
 			newRoom.transform.localScale = new Vector3 (minWidth + wv, minHeight + hv, 1);
 			newRoom.layer = LayerMask.NameToLayer ("UnusedRoom");
 			rooms [i] = newRoom;
