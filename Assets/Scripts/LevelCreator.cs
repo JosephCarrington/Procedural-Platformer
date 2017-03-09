@@ -249,6 +249,11 @@ public class LevelCreator : MonoBehaviour {
 		map.Build ();
 		player.SetActive (true);
 		player.transform.position = transform.GetChild (0).position;
+		Vector3 camPos = Camera.main.transform.position;
+		camPos.x = transform.GetChild(0).position.x;
+		camPos.y = transform.GetChild(0).position.y;
+
+		Camera.main.transform.position = camPos;
 		Camera.main.GetComponent<CameraController> ().enabled = true;
 
 	}

@@ -29,7 +29,7 @@ public class TileMapController : MonoBehaviour {
 		for (int x = (int)bl.x; x <= (int)tr.x; x++) {
 			for (int y = (int)bl.y; y <= (int)tr.y; y++) {
 				if (x >= 1 && x <= map.width - 1 && y >= 1 && y <= map.height - 1) {
-					map.SetTile (x, y, 0, Random.Range(1, 4));
+					map.SetTile (x, y, 0, Random.Range (0, Random.Range (0, 4)));
 				}
 			}
 		}

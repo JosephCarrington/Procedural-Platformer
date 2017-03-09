@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviour {
 	bool jump = false;
 	bool jumping = false;
 	void Update() {
+		if (Input.GetKeyDown (KeyCode.R)) {
+			Die ();
+		}
 		h = Input.GetAxis ("Horizontal");
 		jump = Input.GetButton ("Jump");
 		if(Input.GetButtonUp("Jump")) {
