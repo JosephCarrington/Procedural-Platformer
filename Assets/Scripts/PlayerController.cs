@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour {
 	float h;
 	bool jump = false;
 	bool jumping = false;
+	bool doubleJumping = false;
 	void Update() {
 		if (Input.GetKeyDown (KeyCode.R)) {
 			Die ();
@@ -56,6 +57,14 @@ public class PlayerController : MonoBehaviour {
 		if(Input.GetButtonUp("Jump")) {
 			jumping = false;
 		}
+
+		if (Input.GetButtonDown ("Double Jump")) {
+			doubleJumping = true;
+		}
+		if (Input.GetButtonUp ("Double Jump")) {
+			doubleJumping = false;
+		}
+			
 	}
 
 	float currentVel;
@@ -96,10 +105,11 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		// Double Jumping
-		if (jump && doubleJumps > 0 && !grounded && !lefted && !righted && !jumping) {
+		if (doubleJumps > 0 && doubleJumping) {
+			doubleJumping = false;
 			lastJumpTime = Time.time;
-			jumping = true;
 			newVel.y = jumpStrength;
+			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
 			doubleJumps--;
 			UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
 		}
