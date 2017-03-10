@@ -1,4 +1,5 @@
 you can try it here: https://josephcarrington.github.io/Procedural-Platformer/
+if it looks like crap or makes you dizzy, try the fullscreen button. I'm still working on the camera settings for different screen resolutions
 
 ### Controls
 
