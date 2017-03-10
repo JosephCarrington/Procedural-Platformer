@@ -74,6 +74,8 @@ public class PlayerController : MonoBehaviour {
 	public float wallJumpControlLoss = 0.25f;
 
 	public int doubleJumps = 3;
+	private float lastDoubleJumpTime = 0f;
+	public float doubleJumpFallDeathDelay = 0.25f;
 
 	public AnimationCurve wallJumpControlCurve;
 	void FixedUpdate () {
@@ -108,7 +110,8 @@ public class PlayerController : MonoBehaviour {
 		if (doubleJumps > 0 && doubleJumping) {
 			doubleJumping = false;
 			lastJumpTime = Time.time;
-			newVel.y = jumpStrength;
+			lastDoubleJumpTime = Time.time;
+			newVel.y = jumpStrength * 2;
 			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
 			doubleJumps--;
 			UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
@@ -163,7 +166,9 @@ public class PlayerController : MonoBehaviour {
 	public float stamina = 40f;
 	void OnCollisionEnter2D(Collision2D col) {
 		if (col.relativeVelocity.magnitude > stamina) {
-			Die ();
+			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
+				Die ();
+			}
 		}
 
 	}
