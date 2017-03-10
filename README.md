@@ -24,7 +24,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)
-- [ ] Minimap
+- [x] Minimap
 
 #### Visual sprucing up
 - [ ] Movement animations
