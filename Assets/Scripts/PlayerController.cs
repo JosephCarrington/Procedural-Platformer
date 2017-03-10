@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -37,12 +38,16 @@ public class PlayerController : MonoBehaviour {
 				break;
 			}
 		}
+
+		UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
+
 	}
 	
 	// Update is called once per frame
 	float h;
 	bool jump = false;
 	bool jumping = false;
+	bool doubleJumping = false;
 	void Update() {
 		if (Input.GetKeyDown (KeyCode.R)) {
 			Die ();
@@ -52,6 +57,14 @@ public class PlayerController : MonoBehaviour {
 		if(Input.GetButtonUp("Jump")) {
 			jumping = false;
 		}
+
+		if (Input.GetButtonDown ("Double Jump")) {
+			doubleJumping = true;
+		}
+		if (Input.GetButtonUp ("Double Jump")) {
+			doubleJumping = false;
+		}
+			
 	}
 
 	float currentVel;
@@ -59,6 +72,8 @@ public class PlayerController : MonoBehaviour {
 
 	private float lastJumpTime;
 	public float wallJumpControlLoss = 0.25f;
+
+	public int doubleJumps = 3;
 
 	public AnimationCurve wallJumpControlCurve;
 	void FixedUpdate () {
@@ -88,6 +103,17 @@ public class PlayerController : MonoBehaviour {
 
 			}
 		}
+
+		// Double Jumping
+		if (doubleJumps > 0 && doubleJumping) {
+			doubleJumping = false;
+			lastJumpTime = Time.time;
+			newVel.y = jumpStrength;
+			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
+			doubleJumps--;
+			UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
+		}
+
 		if ((!jump && !jumping) && (lefted || righted)) {
 			// WE ARE PRESSING ON A WALL
 			newVel.x = h * speed;
@@ -114,6 +140,22 @@ public class PlayerController : MonoBehaviour {
 		body.velocity = newVel;
 	}
 		
+	public enum InventoryItem {
+		DoubleJump
+	}
+	void UpdateInventoryCount(InventoryItem item, int newCount) {
+		GameObject countObject = null;
+		switch (item) {
+		case InventoryItem.DoubleJump: 
+			countObject = GameObject.Find ("DoubleJump Amount");
+			break;
+		}
+
+		Text countText = countObject.GetComponent<Text>();
+		countText.text = newCount.ToString ();
+
+	}
+
 	float GetBetweenValue(float min, float max, float inputValue) {
 		return(inputValue - min) / (max - min);
 	}

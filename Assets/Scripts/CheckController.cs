@@ -17,7 +17,7 @@ public class CheckController : MonoBehaviour {
 		
 	public bool Check() {
 		foreach (Transform child in transform) {
-			RaycastHit2D h = Physics2D.Raycast (gameObject.transform.position, child.position - gameObject.transform.position, 0.6f, defaultWalls);
+			RaycastHit2D h = Physics2D.Raycast (gameObject.transform.position, child.position - gameObject.transform.position, 0.7f, defaultWalls);
 			if (h.transform == null) {
 				continue;
 			} else {
