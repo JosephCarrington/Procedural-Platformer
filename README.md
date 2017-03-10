@@ -5,6 +5,7 @@ you can try it here: https://josephcarrington.github.io/Procedural-Platformer/
 Jump around a procedurally generated platformer without dying from falling.Collect coins for some reason. More features incoming
 (A D,LEFT RIGHT, PS4 Left Stick) to move about
 (Space, PS4 X) to jump
+W to doubleJump
 R to reset
 
 Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/252889/Procedural_Dungeon_Generation_Algorithm.php
@@ -23,9 +24,10 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)
-- [ ] Minimap
+- [x] Minimap
 
 #### Visual sprucing up
 - [ ] Movement animations
 - [ ] Marching Squares sprites
 - [x] More Interesting Walls
+- [ ] Collision particles
