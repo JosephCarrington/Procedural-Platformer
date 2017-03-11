@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+using Utils;
+
 public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
@@ -40,6 +42,8 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
+
+		map = GameObject.Find("TileMap").GetComponent<TileMapController>();
 
 	}
 	
@@ -164,14 +168,40 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public float stamina = 40f;
+
+	TileMapController map;
 	void OnCollisionEnter2D(Collision2D col) {
 		if (col.relativeVelocity.magnitude > stamina) {
 			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
-				Die ();
+				bool isWallBelow = map.IsWallAtCoords(
+					new Coordinates(
+						Mathf.RoundToInt(gameObject.transform.position.x) + 128,
+						Mathf.RoundToInt(gameObject.transform.position.y) + 128 - 1
+					)
+				);
+				if (isWallBelow) {
+					Die ();
+				}
 			}
 		}
-
 	}
+
+	void OnCollisionStay2D(Collision2D col) {
+		if (col.relativeVelocity.magnitude > stamina) {
+			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
+				bool isWallBelow = map.IsWallAtCoords(
+					new Coordinates(
+						Mathf.RoundToInt(gameObject.transform.position.x) + 128,
+						Mathf.RoundToInt(gameObject.transform.position.y) + 128 - 1
+					)
+				);
+				if (isWallBelow) {
+					Die ();
+				}
+			}
+		}
+	}
+
 
 	private int score = 0;
 	void Score(int scoreToAdd) {
