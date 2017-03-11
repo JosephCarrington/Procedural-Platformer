@@ -184,8 +184,24 @@ public class PlayerController : MonoBehaviour {
 				}
 			}
 		}
-
 	}
+
+	void OnCollisionStay2D(Collision2D col) {
+		if (col.relativeVelocity.magnitude > stamina) {
+			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
+				bool isWallBelow = map.IsWallAtCoords(
+					new Coordinates(
+						Mathf.RoundToInt(gameObject.transform.position.x) + 128,
+						Mathf.RoundToInt(gameObject.transform.position.y) + 128 - 1
+					)
+				);
+				if (isWallBelow) {
+					Die ();
+				}
+			}
+		}
+	}
+
 
 	private int score = 0;
 	void Score(int scoreToAdd) {
