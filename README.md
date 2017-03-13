@@ -23,6 +23,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Downstairs
 - [x] Coin style collectibles
 - [ ] Something to DO wiht those coins
+- [ ] Hanging things to climb
 
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)
@@ -33,3 +34,4 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Marching Squares sprites
 - [x] More Interesting Walls
 - [ ] Collision particles
+- [x] Decorations
