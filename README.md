@@ -16,12 +16,13 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] HP
 - [x] Double Jump Consumable
 - [ ] Grappling Hook Consumable
-- [ ] Lava
+- [x] Lava
 - [ ] Enemies
 - [ ] Different physics materials
 - [ ] Difficulty Curve
 - [ ] Downstairs
 - [x] Coin style collectibles
+- [ ] Something to DO wiht those coins
 
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)

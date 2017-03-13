@@ -28,13 +28,15 @@ public class TileMapController : MonoBehaviour {
 
 	public bool IsWallAtCoords(Coordinates coords) {
 		if (coords.x < 0 || coords.x >= map.width || coords.y < 0 || coords.y >= map.height) {
-			throw new UnityException ("Coords out of bounds : " + coords.ToString());
+			print("Coords out of bounds : " + coords.ToString());
+			return false;
 		}
 		int wall = map.GetTile (coords.x, coords.y, 0);
 		switch (wall) {
 		case 4:
 		case 5:
 		case 6:
+		case 8:
 			return true;
 		default:
 			return false;
@@ -49,6 +51,45 @@ public class TileMapController : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public int GetWallColumnHeight(Coordinates a) {
+		int wallHeight = 0;
+		bool wallAtPos = true;
+		while (wallAtPos) {
+			if (IsWallAtCoords (
+				new Coordinates(a.x, a.y + wallHeight)
+			)) {
+				wallHeight++;
+				wallAtPos = true;
+			} else {
+				wallAtPos = false;
+			}
+		}
+
+		return wallHeight;
+	}
+
+	public void CreateLava(Coordinates a, Coordinates b) {
+		for (int x = a.x; x <= b.x; x++) {
+			for (int y = a.y; y <= b.y; y++) {
+				map.SetTile (x, y, 1, 8);
+			}
+		}
+	}
+
+	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
+//		Color lineColor = a.x != b.x ? Color.red : Color.blue;
+//		Debug.DrawLine (new Vector3 (a.x - 128, a.y - 128, -2), new Vector3 (b.x - 128, b.y - 128, -2), lineColor);
+//		Debug.Break();
+		for (int x = a.x; x <= b.x; x++) {
+			for (int y = a.y; y <= b.y; y++) {
+				if(!IsWallAtCoords(new Coordinates(x, y))) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public void Build() {

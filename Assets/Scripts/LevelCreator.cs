@@ -240,6 +240,7 @@ public class LevelCreator : MonoBehaviour {
 //		tiles = new Tile[mapSize.x, mapSize.y];
 		foreach (Transform child in transform) {
 //			WallInRoom (child.gameObject);
+			child.gameObject.AddComponent<Room>();
 			CarveOutRoom(child.gameObject);
 			Destroy (child.GetComponent<Rigidbody2D> ());
 			Destroy (child.GetComponent<BoxCollider2D> ());
@@ -247,14 +248,27 @@ public class LevelCreator : MonoBehaviour {
 
 		}
 
-		map.Build ();
 		player.SetActive (true);
 
-		Vector2 roomOnePos = transform.GetChild (0).position;
+		Coordinates entranceRoomPos = null;
+		Room entranceRoom = null;
+		foreach(Transform child in transform) {
+			Room room = child.gameObject.GetComponent<Room> ();
+			if(map.DoesContinuousWallExist(
+				new Coordinates(room.bottomLeft.x, room.bottomLeft.y -1),
+				new Coordinates(room.bottomRight.x, room.bottomRight.y - 1)
+			)) {
+				entranceRoomPos = room.pos;
+				entranceRoom = room;
+				break;
+			}
+		}
+
+
+
+
 		bool wallUnder = false;
-		Coordinates playerPos = new Coordinates ((int)roomOnePos.x, (int)roomOnePos.y);
-		playerPos.x += (int)mapSize.x / 2;
-		playerPos.y += (int)mapSize.y / 2;
+		Coordinates playerPos = entranceRoomPos;
 		int currentYCheck = playerPos.y - 1;
 		while (!wallUnder) {
 			if (map.IsWallAtCoords (new Coordinates(playerPos.x, currentYCheck))) {
@@ -265,6 +279,64 @@ public class LevelCreator : MonoBehaviour {
 		}
 		Vector2 newPlayerPos = new Vector2 (playerPos.x - (mapSize.x / 2), currentYCheck - (mapSize.y / 2) + 1);
 		player.transform.position = newPlayerPos;
+
+		foreach (Transform child in transform) {
+			if (Random.value < chanceToAttemptLava) {
+				Room room = child.GetComponent<Room> ();
+				if(room != entranceRoom) {
+					int lavaDepth = 4;
+					// Check if there is lavaDepth depth of room cuppyness
+					Coordinates bottomLeftWall = new Coordinates(room.bottomLeft.x, room.bottomLeft.y),
+					bottomRightWall = new Coordinates(room.bottomRight.x, room.bottomRight.y);
+					bottomLeftWall.x -= 1;
+					bottomLeftWall.y -= 1;
+					bottomRightWall.x += 1;
+					bottomRightWall.y -= 1;
+
+					Coordinates leftCheck = new Coordinates(bottomLeftWall.x, bottomLeftWall.y),
+					rightCheck = new Coordinates(bottomRightWall.x, bottomRightWall.y);
+
+					leftCheck.y += lavaDepth;
+					rightCheck.y += lavaDepth;
+
+					bool canCreateLava = false;
+//					if (
+//						map.DoesContinuousWallExist (bottomLeftWall, leftCheck) &&
+//						map.DoesContinuousWallExist (bottomLeftWall, bottomRightWall) &&
+//						map.DoesContinuousWallExist (bottomRightWall, rightCheck)) {
+//						canCreateLava = true;
+//					}
+//					if (canCreateLava) {
+//						map.CreateLava (
+//							room.bottomLeft,
+//							new Coordinates (room.bottomRight.x, room.bottomRight.y + lavaDepth)
+//						);
+//					}
+					if(map.DoesContinuousWallExist(bottomLeftWall, bottomRightWall)) {
+						
+						int leftColHeight = map.GetWallColumnHeight (
+							new Coordinates (bottomLeftWall.x, bottomLeftWall.y + 1)
+	                    );
+						int rightColHeight = map.GetWallColumnHeight (
+							new Coordinates (bottomRightWall.x, bottomRightWall.y + 1)
+						);
+						if (leftColHeight > 0 && rightColHeight > 0) {
+							int lavaHeight = leftColHeight > rightColHeight ? rightColHeight : leftColHeight;
+							lavaHeight = lavaHeight > lavaDepth ? lavaDepth : lavaHeight;
+							map.CreateLava (
+								room.bottomLeft,
+								new Coordinates (room.bottomRight.x, room.bottomRight.y + lavaHeight - 1)
+							);
+						}
+
+					}
+				}
+			}
+			map.Build ();
+
+		}
+
+
 
 
 
@@ -280,6 +352,7 @@ public class LevelCreator : MonoBehaviour {
 	public Vector3 mapSize = Vector3.one * 256;
 	public GameObject coin;
 	public float chanceToSpawnCoin = 0.01f;
+	public float chanceToAttemptLava = 1f;
 
 	void CarveOutRoom(GameObject room) {
 //		Rect bounds = GetRect (room.transform);
@@ -293,18 +366,14 @@ public class LevelCreator : MonoBehaviour {
 		for (int x = (int)bottomLeft.x; x < (int)topRight.x; x++) {
 			for (int y = (int)bottomLeft.y; y < (int)topRight.y; y++) {	
 				if (Random.value < chanceToSpawnCoin) {
-					GameObject newCoin = GameObject.Instantiate (coin, new Vector3 (x, y, -1), Quaternion.identity);
+					GameObject.Instantiate (coin, new Vector3 (x, y, -1), Quaternion.identity);
 				}
 			}
 		}
-
-
+			
 		bottomLeft += mapSize / 2;
 		topRight += mapSize / 2;
 		map.CarveOutRoom (bottomLeft, topRight);
-
-
-		
 	}
 		
 	void OnDrawGizmos() {
