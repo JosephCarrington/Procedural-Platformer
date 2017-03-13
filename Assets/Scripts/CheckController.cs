@@ -21,6 +21,9 @@ public class CheckController : MonoBehaviour {
 			if (h.transform == null) {
 				continue;
 			} else {
+				if (h.transform.gameObject.layer == LayerMask.NameToLayer ("BadWall")) {
+					gameObject.SendMessageUpwards ("Die");
+				}
 				return true;
 			}
 		}
