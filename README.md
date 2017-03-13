@@ -8,6 +8,7 @@ Jump around a procedurally generated platformer without dying from falling.Colle
 (Space, PS4 X) to jump
 W to use a jump boost thingy
 R to reset
+Tab to make the minimap bigger
 
 Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/252889/Procedural_Dungeon_Generation_Algorithm.php
 
@@ -28,6 +29,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)
 - [x] Minimap
+- [x] Minimap biggener
 
 #### Visual sprucing up
 - [ ] Movement animations
