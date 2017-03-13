@@ -34,4 +34,4 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Marching Squares sprites
 - [x] More Interesting Walls
 - [ ] Collision particles
-- [ ] Decorationst 
+- [x] Decorations
