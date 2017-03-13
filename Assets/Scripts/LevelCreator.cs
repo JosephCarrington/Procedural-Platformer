@@ -67,6 +67,12 @@ public class LevelCreator : MonoBehaviour {
 	List<Vector2> midPoints;
 	public int lavaDepth = 4;
 
+
+	public float chanceToSpawnGroundDecoration = 0.5f;
+
+	public GameObject[] groundDecorationPrefabs;
+	private GameObject[,] groundDecorations = new GameObject[(int)mapSize.x, (int)mapSize.y];
+
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = minWidth + (widthVarience / 2);
 		meanHeight = minHeight + (heightVarience / 2);
@@ -334,13 +340,31 @@ public class LevelCreator : MonoBehaviour {
 					}
 				}
 			}
+
 			map.Build ();
-
 		}
-
-
-
-
+			
+		// Ground deco
+		foreach(Transform child in transform) {
+			Room room = child.gameObject.GetComponent<Room>();
+			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
+				if(Random.value < chanceToSpawnGroundDecoration) {
+					if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+						GameObject newDeco = GameObject.Instantiate (
+							groundDecorationPrefabs [Random.Range (0, groundDecorationPrefabs.Length)],
+							new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2),
+							Quaternion.identity
+						);
+						if (Random.value > 0.5) {
+							Vector3 newScale = newDeco.gameObject.transform.localScale;
+							newScale.x = -1;
+							newDeco.gameObject.transform.localScale = newScale;
+						}
+						groundDecorations [x, room.bottomLeft.y] = newDeco;
+					}
+				}
+			}
+		}
 
 		Vector3 camPos = Camera.main.transform.position;
 		camPos.x = newPlayerPos.x;
@@ -351,10 +375,11 @@ public class LevelCreator : MonoBehaviour {
 
 	}
 
-	public Vector3 mapSize = Vector3.one * 256;
+	public static Vector3 mapSize = Vector3.one * 256;
 	public GameObject coin;
 	public float chanceToSpawnCoin = 0.01f;
 	public float chanceToAttemptLava = 1f;
+
 
 	void CarveOutRoom(GameObject room) {
 //		Rect bounds = GetRect (room.transform);
@@ -372,7 +397,7 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 		}
-			
+
 		bottomLeft += mapSize / 2;
 		topRight += mapSize / 2;
 		map.CarveOutRoom (bottomLeft, topRight);
