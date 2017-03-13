@@ -65,6 +65,8 @@ public class LevelCreator : MonoBehaviour {
 	public float chanceToAddExtraCorridor = 0.1f;
 
 	List<Vector2> midPoints;
+	public int lavaDepth = 4;
+
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = minWidth + (widthVarience / 2);
 		meanHeight = minHeight + (heightVarience / 2);
@@ -284,7 +286,7 @@ public class LevelCreator : MonoBehaviour {
 			if (Random.value < chanceToAttemptLava) {
 				Room room = child.GetComponent<Room> ();
 				if(room != entranceRoom) {
-					int lavaDepth = 4;
+
 					// Check if there is lavaDepth depth of room cuppyness
 					Coordinates bottomLeftWall = new Coordinates(room.bottomLeft.x, room.bottomLeft.y),
 					bottomRightWall = new Coordinates(room.bottomRight.x, room.bottomRight.y);
