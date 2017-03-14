@@ -60,7 +60,7 @@ public class SlimeController : MonoBehaviour {
 //			Debug.DrawLine(transform.position, hit.point, Color.red);
 //			Debug.Break ();
 			xChange = (hit.point.x - transform.position.x);
-			float halfWidth = gameObject.GetComponent<BoxCollider2D> ().size.x / 2;
+			float halfWidth = gameObject.GetComponent<CircleCollider2D> ().radius;
 			xChange += d == Direction.Right ? -halfWidth : halfWidth;
 		}
 
@@ -111,7 +111,7 @@ public class SlimeController : MonoBehaviour {
 
 	void Die() {
 		animator.SetBool ("Dead", true);
-		Destroy(gameObject.GetComponent<BoxCollider2D>());
+		Destroy(gameObject.GetComponent<CircleCollider2D>());
 		dead = true;
 	}
 
