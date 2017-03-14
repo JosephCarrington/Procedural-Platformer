@@ -47,7 +47,7 @@ public class TileMapController : MonoBehaviour {
 		for (int x = (int)bl.x; x <= (int)tr.x; x++) {
 			for (int y = (int)bl.y; y <= (int)tr.y; y++) {
 				if (x >= 1 && x <= map.width - 1 && y >= 1 && y <= map.height - 1) {
-					map.SetTile (x, y, 0, Random.Range (0, Random.Range (0, 4)));
+					CreateEmptyTileAt(new Coordinates(x, y));
 				}
 			}
 		}
@@ -76,6 +76,13 @@ public class TileMapController : MonoBehaviour {
 				map.SetTile (x, y, 1, 8);
 			}
 		}
+	}
+
+	public void CreateEmptyTileAt(Coordinates c) {
+		map.SetTile (c.x, c.y, 0, Random.Range (0, Random.Range (0, 4)));
+	}
+	public void CreateWallTileAt(Coordinates c) {
+		map.SetTile (c.x, c.y, 0, Random.Range (4, 7));
 	}
 
 	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {

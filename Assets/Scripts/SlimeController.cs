@@ -104,6 +104,7 @@ public class SlimeController : MonoBehaviour {
 	}
 	public void GetHurt(int damage = 1) {
 		hp -= damage;
+		transform.Find ("Particles").GetComponent<ParticleSystem> ().Play ();
 		if (hp <= 0) {
 			Die ();
 		}

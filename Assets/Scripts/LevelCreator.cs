@@ -73,6 +73,9 @@ public class LevelCreator : MonoBehaviour {
 	public GameObject[] groundDecorationPrefabs;
 	private GameObject[,] groundDecorations = new GameObject[(int)mapSize.x, (int)mapSize.y];
 
+	public GameObject exit;
+
+
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = minWidth + (widthVarience / 2);
 		meanHeight = minHeight + (heightVarience / 2);
@@ -327,11 +330,9 @@ public class LevelCreator : MonoBehaviour {
 					}
 				}
 			}
-
-			map.Build ();
 		}
 			
-		// Ground deco
+		// Ground deco, enemies
 		foreach(Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
@@ -354,12 +355,34 @@ public class LevelCreator : MonoBehaviour {
 						GameObject newEnemy = GameObject.Instantiate (enemyPrefabs [0], new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
 						enemies.Add (newEnemy);
 					}
-
 				}
-
-							
 			}
 		}
+
+		// Exit
+		Vector2 minExitRoomSize = new Vector2(8, 8);
+		bool placedExit = false;
+		foreach (Transform child in transform) {
+			Room room = child.gameObject.GetComponent<Room> ();
+			// Don't spawn the exit in the room we start in
+			if (room != entranceRoom) {
+				// Don't spawn the exit in a room that is too small
+				if (room.size.x >= minExitRoomSize.x && room.size.y >= minExitRoomSize.y) {
+					GameObject newExit = GameObject.Instantiate (exit, new Vector3 (room.pos.x - (mapSize.x / 2) + 0.5f, room.pos.y - ((mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
+					// Make a floor beneath it
+					map.CreateWallTileAt(new Coordinates(room.pos.x, room.pos.y -1));
+					map.CreateWallTileAt(new Coordinates(room.pos.x + 1, room.pos.y -1));
+					placedExit = true;
+				}
+				if (placedExit) {
+					break;
+				}
+			}
+		}
+
+		map.Build ();
+
+
 
 		Vector3 camPos = Camera.main.transform.position;
 		camPos.x = newPlayerPos.x;
@@ -410,24 +433,24 @@ public class LevelCreator : MonoBehaviour {
 //			Gizmos.DrawSphere (point, 1f);
 //		}
 //
-//		Gizmos.color = Color.magenta;
-//		if (m_delaunayTriangulation != null) {
-//			for (int i = 0; i< m_delaunayTriangulation.Count; i++) {
-//				Vector2 left = (Vector2)m_delaunayTriangulation [i].p0;
-//				Vector2 right = (Vector2)m_delaunayTriangulation [i].p1;
-//				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
-//			}
-//		}
-//		if (m_spanningTree != null) {
-//			Gizmos.color = Color.green;
-//			for (int i = 0; i< m_spanningTree.Count; i++) {
-//				LineSegment seg = m_spanningTree [i];				
-//				Vector2 left = (Vector2)seg.p0;
-//				Vector2 right = (Vector2)seg.p1;
-//				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
-//			}
-//		}
-//
+		Gizmos.color = Color.magenta;
+		if (m_delaunayTriangulation != null) {
+			for (int i = 0; i< m_delaunayTriangulation.Count; i++) {
+				Vector2 left = (Vector2)m_delaunayTriangulation [i].p0;
+				Vector2 right = (Vector2)m_delaunayTriangulation [i].p1;
+				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+			}
+		}
+		if (m_spanningTree != null) {
+			Gizmos.color = Color.green;
+			for (int i = 0; i< m_spanningTree.Count; i++) {
+				LineSegment seg = m_spanningTree [i];				
+				Vector2 left = (Vector2)seg.p0;
+				Vector2 right = (Vector2)seg.p1;
+				Gizmos.DrawLine ((Vector3)left, (Vector3)right);
+			}
+		}
+
 //		if (corridors != null) {
 //			Gizmos.color = Color.yellow;
 //			for (int i = 0; i< corridors.Count; i++) {
@@ -500,6 +523,10 @@ public class LevelCreator : MonoBehaviour {
 	private List<GameObject> enemies = new List<GameObject>();
 
 	public float chanceToSpawnEnemy = 0.01f;
+
+	void SpawnExitAtCoords(Coordinates c) {
+		
+	}
 
 
 }

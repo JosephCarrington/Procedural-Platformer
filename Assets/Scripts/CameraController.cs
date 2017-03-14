@@ -8,12 +8,20 @@ public class CameraController : MonoBehaviour {
 	// Use this for initialization
 	GameObject player;
 	Text score;
+	private Vector2 lookOffset;
+	public Vector2 lookOffsetStrength = Vector2.one;
 
 	void Start () {
 		player = GameObject.Find ("Player");
 		score = GameObject.Find ("Score").GetComponent<Text>();
 	}
-	
+
+	void Update() {
+		float h = Input.GetAxis ("Look Horizontal");
+		float v = Input.GetAxis ("Look Vertical");
+		lookOffset = new Vector2 (h * lookOffsetStrength.x, v * lookOffsetStrength.y);
+
+	}
 	// Update is called once per frame
 	Vector2 currentVel;
 
@@ -21,6 +29,7 @@ public class CameraController : MonoBehaviour {
 	public float smoothTime = 0.5f;
 	void FixedUpdate () {
 		Vector2 newPos = player.transform.position;
+		newPos += lookOffset;
 		newPos += (player.GetComponent<Rigidbody2D> ().velocity) * lookaheadFactor;
 //		newPos.z = transform.position.z;
 //		transform.position = newPos;
@@ -31,4 +40,6 @@ public class CameraController : MonoBehaviour {
 	void SetScore(int newScore) {
 		score.text = newScore.ToString();
 	}
+
+
 }
