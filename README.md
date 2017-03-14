@@ -31,6 +31,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Better death implementation (so the player knows why they died)
 - [x] Minimap
 - [x] Minimap biggener
+- [ ] Make things not spawn in lava
 
 #### Visual sprucing up
 - [ ] Movement animations
