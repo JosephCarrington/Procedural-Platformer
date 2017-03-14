@@ -307,19 +307,6 @@ public class LevelCreator : MonoBehaviour {
 					leftCheck.y += lavaDepth;
 					rightCheck.y += lavaDepth;
 
-					bool canCreateLava = false;
-//					if (
-//						map.DoesContinuousWallExist (bottomLeftWall, leftCheck) &&
-//						map.DoesContinuousWallExist (bottomLeftWall, bottomRightWall) &&
-//						map.DoesContinuousWallExist (bottomRightWall, rightCheck)) {
-//						canCreateLava = true;
-//					}
-//					if (canCreateLava) {
-//						map.CreateLava (
-//							room.bottomLeft,
-//							new Coordinates (room.bottomRight.x, room.bottomRight.y + lavaDepth)
-//						);
-//					}
 					if(map.DoesContinuousWallExist(bottomLeftWall, bottomRightWall)) {
 						
 						int leftColHeight = map.GetWallColumnHeight (
@@ -348,8 +335,9 @@ public class LevelCreator : MonoBehaviour {
 		foreach(Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
-				if(Random.value < chanceToSpawnGroundDecoration) {
-					if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+					
+					if(Random.value < chanceToSpawnGroundDecoration) {
 						GameObject newDeco = GameObject.Instantiate (
 							groundDecorationPrefabs [Random.Range (0, groundDecorationPrefabs.Length)],
 							new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2),
@@ -362,7 +350,14 @@ public class LevelCreator : MonoBehaviour {
 						}
 						groundDecorations [x, room.bottomLeft.y] = newDeco;
 					}
+					if (room != entranceRoom && Random.value < chanceToSpawnEnemy) {
+						GameObject newEnemy = GameObject.Instantiate (enemyPrefabs [0], new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+						enemies.Add (newEnemy);
+					}
+
 				}
+
+							
 			}
 		}
 
@@ -389,7 +384,15 @@ public class LevelCreator : MonoBehaviour {
 		bottomLeft -= room.transform.lossyScale / 2;
 		topRight += room.transform.lossyScale / 2;
 
-		// Coins
+
+
+		bottomLeft += mapSize / 2;
+		topRight += mapSize / 2;
+		map.CarveOutRoom (bottomLeft, topRight);
+		bottomLeft -= mapSize / 2;
+		topRight -= mapSize / 2;
+
+		// Coins and Enemies
 		for (int x = (int)bottomLeft.x; x < (int)topRight.x; x++) {
 			for (int y = (int)bottomLeft.y; y < (int)topRight.y; y++) {	
 				if (Random.value < chanceToSpawnCoin) {
@@ -397,10 +400,6 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 		}
-
-		bottomLeft += mapSize / 2;
-		topRight += mapSize / 2;
-		map.CarveOutRoom (bottomLeft, topRight);
 	}
 		
 	void OnDrawGizmos() {
@@ -496,6 +495,12 @@ public class LevelCreator : MonoBehaviour {
 			hit.transform.gameObject.layer = LayerMask.NameToLayer ("ConnectingRoom");
 		}
 	}
+
+	public GameObject[] enemyPrefabs;
+	private List<GameObject> enemies = new List<GameObject>();
+
+	public float chanceToSpawnEnemy = 0.01f;
+
 
 }
 		
