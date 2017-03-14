@@ -202,6 +202,24 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
+	public float enemyBounceAmount = 10f;
+	public void BounceOffEnemy(float factor) {
+		Vector2 newVel = gameObject.GetComponent<Rigidbody2D> ().velocity;
+		newVel.y = Mathf.Max(newVel.y, enemyBounceAmount * factor);
+		gameObject.GetComponent<Rigidbody2D> ().velocity = newVel;
+//		lastJumpTime = Time.time;
+//		jumping = true;
+
+	}
+
+	public int hp = 1;
+	public void TakeDamage(int amount) {
+		hp -= amount;
+		if (hp <= 0) {
+			Die ();
+		}
+	}
+
 
 	private int score = 0;
 	void Score(int scoreToAdd) {

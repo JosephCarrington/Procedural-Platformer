@@ -18,13 +18,14 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] Double Jump Consumable
 - [ ] Grappling Hook Consumable
 - [x] Lava
-- [ ] Enemies
+- [x] Enemies
 - [ ] Different physics materials
 - [ ] Difficulty Curve
 - [ ] Downstairs
 - [x] Coin style collectibles
 - [ ] Something to DO wiht those coins
 - [ ] Hanging things to climb
+- [ ] Slime trails
 
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)
@@ -37,3 +38,4 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] More Interesting Walls
 - [ ] Collision particles
 - [x] Decorations
+- [ ] Slime stomp particles
