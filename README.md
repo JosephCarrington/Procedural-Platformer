@@ -14,7 +14,6 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 
 #### TODO's
 - [x] Fall Damage
-- [ ] HP
 - [x] Double Jump Consumable
 - [ ] Grappling Hook Consumable
 - [x] Lava
@@ -25,7 +24,18 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] Coin style collectibles
 - [ ] Something to DO wiht those coins
 - [ ] Hanging things to climb
+
+#### Slimes
 - [ ] Slime trails
+- [x] Slime stomp particles
+- [ ] If you have special item: Pick up slime by interacting with them, then throw them
+
+#### Items
+- [ ] Gloves
+
+#### HP
+- [ ] HP
+- [ ] Knockback
 
 #### Quality of Life TODO's
 - [ ] Better death implementation (so the player knows why they died)
@@ -39,4 +49,3 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] More Interesting Walls
 - [ ] Collision particles
 - [x] Decorations
-- [x] Slime stomp particles
