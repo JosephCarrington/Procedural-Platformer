@@ -129,6 +129,7 @@ public class SlimeController : MonoBehaviour {
 					col.gameObject.GetComponent<PlayerController> ().BounceOffEnemy (1f);
 				} else {
 					col.gameObject.GetComponent<PlayerController> ().TakeDamage (strength);
+					col.gameObject.GetComponent<PlayerController> ().KnockBack (c.normal, strength * 10);
 				}
 
 			}

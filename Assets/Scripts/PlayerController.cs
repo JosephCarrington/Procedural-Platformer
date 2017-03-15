@@ -41,6 +41,10 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
+
+		hpDisplay = GameObject.Find ("Hearts");
+		hpDisplay.GetComponent<HeartPanelController> ().SetHeartCount (hp);
+
 		UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
 
 		map = GameObject.Find("TileMap").GetComponent<TileMapController>();
@@ -85,6 +89,10 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate () {
 		// GET SOME VARS //
 		Vector2 newVel = body.velocity;
+		if (Time.time < lastKnockBack + knockBackControlLoss) {
+			return;
+		}
+
 		grounded = groundCheck.GetComponent<CheckController> ().Check ();
 		lefted = leftCheck.GetComponent<CheckController> ().Check ();
 		righted = rightCheck.GetComponent<CheckController> ().Check ();
@@ -213,11 +221,19 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public int hp = 1;
+	private GameObject hpDisplay;
 	public void TakeDamage(int amount) {
 		hp -= amount;
+		hpDisplay.GetComponent<HeartPanelController> ().SetHeartCount (hp);
 		if (hp <= 0) {
 			Die ();
 		}
+	}
+	public float knockBackControlLoss = 0.5f;
+	private float lastKnockBack;
+	public void KnockBack(Vector2 hitLocation, float knockBackStrength) {
+		gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2(-hitLocation.x, 1) * knockBackStrength, ForceMode2D.Impulse);
+		lastKnockBack = Time.time;
 	}
 
 

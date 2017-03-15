@@ -220,7 +220,7 @@ public class LevelCreator : MonoBehaviour {
 				}
 				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
 				finalRooms.Add (GameObject.Instantiate (room, gameObject.transform));
-				print ("Adding room to final");
+
 				Rect roomRect = GetRect (room.transform);
 				if (roomRect.xMin < levelBounds.xMin) {
 					levelBounds.xMin = roomRect.xMin;
