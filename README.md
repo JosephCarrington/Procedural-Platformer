@@ -41,12 +41,13 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] HP
 - [x] Knockback
 
-#### Quality of Life TODO's
+#### Quality of Life
 - [ ] Better death implementation (so the player knows why they died)
 - [x] Minimap
 - [x] Minimap biggener
 - [ ] Make things not spawn in lava
 - [ ] Better screen resolution handling
+- [ ] Dial in controls
 
 #### Visual sprucing up
 - [ ] Movement animations
