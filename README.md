@@ -33,6 +33,10 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 #### Items
 - [ ] Gloves
 
+### Traps!
+- [ ] Rockfall trap
+- [ ] Bounce the player around trap
+
 #### HP
 - [x] HP
 - [x] Knockback
@@ -42,6 +46,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] Minimap
 - [x] Minimap biggener
 - [ ] Make things not spawn in lava
+- [ ] Better screen resolution handling
 
 #### Visual sprucing up
 - [ ] Movement animations
