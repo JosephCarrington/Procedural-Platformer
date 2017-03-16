@@ -229,6 +229,7 @@ public class PlayerController : MonoBehaviour {
 			// be invincible
 			return;
 		}
+		transform.Find ("Blood Particles").GetComponent<ParticleSystem> ().Play ();
 		hp -= amount;
 		hpDisplay.GetComponent<HeartPanelController> ().SetHeartCount (hp);
 		if (hp <= 0) {
