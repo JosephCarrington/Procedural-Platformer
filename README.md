@@ -58,3 +58,4 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] More Interesting Walls
 - [ ] Collision particles
 - [x] Decorations
+- [ ] charactor

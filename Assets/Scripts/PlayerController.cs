@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour {
 
 		map = GameObject.Find("TileMap").GetComponent<TileMapController>();
 
+		regularColor = gameObject.GetComponent<SpriteRenderer> ().color;
+
 	}
 	
 	// Update is called once per frame
@@ -223,6 +225,10 @@ public class PlayerController : MonoBehaviour {
 	public int hp = 1;
 	private GameObject hpDisplay;
 	public void TakeDamage(int amount) {
+		if (Time.time < lastKnockBack + knockBackControlLoss) {
+			// be invincible
+			return;
+		}
 		hp -= amount;
 		hpDisplay.GetComponent<HeartPanelController> ().SetHeartCount (hp);
 		if (hp <= 0) {
@@ -231,9 +237,22 @@ public class PlayerController : MonoBehaviour {
 	}
 	public float knockBackControlLoss = 0.5f;
 	private float lastKnockBack;
-	public void KnockBack(Vector2 hitLocation, float knockBackStrength) {
-		gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2(-hitLocation.x, 1) * knockBackStrength, ForceMode2D.Impulse);
+	public void KnockBack(Vector2 knockBackForce) {
+		if (Time.time < lastKnockBack + knockBackControlLoss) {
+			// be invincible
+			return;
+		}
+		StartCoroutine (BecomeInvincible ());
+		gameObject.GetComponent<Rigidbody2D> ().AddForce (knockBackForce, ForceMode2D.Impulse);
 		lastKnockBack = Time.time;
+	}
+
+	Color regularColor;
+	public Color invincibleColor;
+	IEnumerator BecomeInvincible() {
+		gameObject.GetComponent<SpriteRenderer> ().color = invincibleColor;
+		yield return new WaitForSeconds (knockBackControlLoss);
+		gameObject.GetComponent<SpriteRenderer> ().color = regularColor;
 	}
 
 

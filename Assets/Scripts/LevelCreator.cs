@@ -75,6 +75,8 @@ public class LevelCreator : MonoBehaviour {
 
 	public GameObject exit;
 
+	public float chanceToSpawnSpike = 0.75f;
+
 
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = minWidth + (widthVarience / 2);
@@ -332,13 +334,27 @@ public class LevelCreator : MonoBehaviour {
 			}
 		}
 			
-		// Ground deco, enemies
+		// Ground deco, enemies, spikes
 		foreach(Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
 				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y))) {
 					
-					if(Random.value < chanceToSpawnGroundDecoration) {
+					bool spawnedEnemy = false;
+					if (room != entranceRoom && Random.value < chanceToSpawnEnemy) {
+						GameObject newEnemy = GameObject.Instantiate (enemyPrefabs [0], new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+						enemies.Add (newEnemy);
+						spawnedEnemy = true;
+					}
+
+					bool spawnedSpike = false;
+					if (!spawnedEnemy && room != entranceRoom && Random.value < chanceToSpawnSpike) {
+						spawnedSpike = true;
+//						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y));
+						GameObject newSpike = GameObject.Instantiate(spike, new Vector3(x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+					}
+
+					if(!spawnedSpike && Random.value < chanceToSpawnGroundDecoration) {
 						GameObject newDeco = GameObject.Instantiate (
 							groundDecorationPrefabs [Random.Range (0, groundDecorationPrefabs.Length)],
 							new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2),
@@ -351,10 +367,8 @@ public class LevelCreator : MonoBehaviour {
 						}
 						groundDecorations [x, room.bottomLeft.y] = newDeco;
 					}
-					if (room != entranceRoom && Random.value < chanceToSpawnEnemy) {
-						GameObject newEnemy = GameObject.Instantiate (enemyPrefabs [0], new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
-						enemies.Add (newEnemy);
-					}
+
+
 				}
 			}
 		}
@@ -392,6 +406,8 @@ public class LevelCreator : MonoBehaviour {
 		Camera.main.GetComponent<CameraController> ().enabled = true;
 
 	}
+
+	public GameObject spike;
 
 	public static Vector3 mapSize = Vector3.one * 256;
 	public GameObject coin;
