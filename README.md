@@ -25,6 +25,9 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Something to DO wiht those coins
 - [ ] Hanging things to climb
 
+#### Coins
+- [ ] Redo collectibles into Spelunky style chests
+
 #### Slimes
 - [ ] Slime trails
 - [x] Slime stomp particles
