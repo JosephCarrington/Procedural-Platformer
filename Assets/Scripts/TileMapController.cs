@@ -80,11 +80,26 @@ public class TileMapController : MonoBehaviour {
 
 	public void CreateEmptyTileAt(Coordinates c) {
 		map.SetTile (c.x, c.y, 0, Random.Range (0, Random.Range (0, 4)));
+//		map.ColorChannel.SetColor (c.x, c.y, Color.white);
+//		map.ColorChannel.SetColor (c.x-1, c.y, Color.white);
+////		map.ColorChannel.SetColor (c.x+1, c.y, Color.white);
+//		map.ColorChannel.SetColor (c.x, c.y-1, Color.white);
+////		map.ColorChannel.SetColor (c.x, c.y+1, Color.white);
+////
+////		map.ColorChannel.SetColor (c.x +1, c.y+1, Color.white);
+////		map.ColorChannel.SetColor (c.x +1, c.y-1, Color.white);
+//
+////		map.ColorChannel.SetColor (c.x -1, c.y+1, Color.white);
+//		map.ColorChannel.SetColor (c.x -1, c.y-1, Color.white);
 	}
+
 	public void CreateWallTileAt(Coordinates c) {
 		map.SetTile (c.x, c.y, 0, Random.Range (4, 7));
 	}
 
+	public void CreateSpikeAt(Coordinates c) {
+		map.SetTile (c.x, c.y, 2, 10);
+	}
 	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
 //		Color lineColor = a.x != b.x ? Color.red : Color.blue;
 //		Debug.DrawLine (new Vector3 (a.x - 128, a.y - 128, -2), new Vector3 (b.x - 128, b.y - 128, -2), lineColor);

@@ -1,0 +1,30 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpikeController : MonoBehaviour {
+
+	// Use this for initialization
+	void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+	void OnTriggerEnter2D(Collider2D col) {
+		if (col.gameObject.name == "Player" || col.gameObject.tag == "Enemy") {
+			// Compare other objects y location to this
+			if (col.gameObject.transform.position.y > gameObject.transform.position.y) {
+				col.gameObject.SendMessage ("TakeDamage", 2);
+				Vector2 knockBack = col.gameObject.transform.position - transform.position;
+				knockBack.y = 3;
+				knockBack.x = -knockBack.x;
+				knockBack *= 10f;
+				col.gameObject.GetComponent<PlayerController> ().KnockBack (knockBack);
+			}
+		}
+	}
+}

@@ -1,14 +1,10 @@
 fileFormatVersion: 2
-guid: 5f78b85055cb54939a790f05fbc270d1
-timeCreated: 1489704847
+guid: 13ecccf18bf1e41a7a704c63a99954c8
+timeCreated: 1489623871
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: doubleJump
-    21300002: heart
-    21300004: icons_0
-    21300006: icons_1
-    21300008: icons_2
+    21300000: traps_0
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -24,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 1
+  isReadable: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -56,64 +52,38 @@ TextureImporter:
   textureFormatSet: 0
   platformSettings:
   - buildTarget: DefaultTexturePlatform
-    maxTextureSize: 8192
+    maxTextureSize: 2048
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Standalone
-    maxTextureSize: 8192
-    textureFormat: -1
-    textureCompression: 0
+    maxTextureSize: 2048
+    textureFormat: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
   - buildTarget: WebGL
-    maxTextureSize: 8192
-    textureFormat: -1
-    textureCompression: 0
+    maxTextureSize: 2048
+    textureFormat: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: icons_0
+      name: traps_0
       rect:
         serializedVersion: 2
         x: 0
         y: 48
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: icons_1
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 48
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: icons_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
         width: 16
         height: 16
       alignment: 0

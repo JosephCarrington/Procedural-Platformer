@@ -25,10 +25,14 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Something to DO wiht those coins
 - [ ] Hanging things to climb
 
+#### Coins
+- [ ] Redo collectibles into Spelunky style chests
+
 #### Slimes
 - [ ] Slime trails
 - [x] Slime stomp particles
 - [ ] If you have special item: Pick up slime by interacting with them, then throw them
+- [x] Slimeballs
 
 #### Items
 - [ ] Gloves
@@ -36,17 +40,19 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 ### Traps!
 - [ ] Rockfall trap
 - [ ] Bounce the player around trap
+- [x] Spikes
 
 #### HP
 - [x] HP
 - [x] Knockback
 
-#### Quality of Life TODO's
+#### Quality of Life
 - [ ] Better death implementation (so the player knows why they died)
 - [x] Minimap
 - [x] Minimap biggener
 - [ ] Make things not spawn in lava
 - [ ] Better screen resolution handling
+- [ ] Dial in controls
 
 #### Visual sprucing up
 - [ ] Movement animations
@@ -54,3 +60,4 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] More Interesting Walls
 - [ ] Collision particles
 - [x] Decorations
+- [ ] charactor
