@@ -28,11 +28,6 @@ public class SlimeController : MonoBehaviour {
 		StartCoroutine (MoveSelector());
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	enum Direction {
 		Left,

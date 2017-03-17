@@ -54,6 +54,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Make things not spawn in lava
 - [ ] Better screen resolution handling
 - [ ] Dial in controls
+- [ ] Implement 'Reality Bubble'
 
 #### Visual sprucing up
 - [ ] Movement animations

@@ -16,17 +16,29 @@ public class CheckController : MonoBehaviour {
 	}
 		
 	public bool Check() {
+		int collidersTouchingBad = 0;
+		int collidersTouchingGood = 0;
 		foreach (Transform child in transform) {
 			RaycastHit2D h = Physics2D.Raycast (gameObject.transform.position, child.position - gameObject.transform.position, 0.7f, defaultWalls);
 			if (h.transform == null) {
 				continue;
 			} else {
 				if (h.transform.gameObject.layer == LayerMask.NameToLayer ("BadWall")) {
-					gameObject.SendMessageUpwards ("Die");
+					collidersTouchingBad++;
+				} else {
+					collidersTouchingGood++;
 				}
-				return true;
 			}
 		}
+		if (collidersTouchingGood > 0) {
+			return true;
+		}
+
+		if (collidersTouchingBad == transform.childCount) {
+//			gameObject.SendMessageUpwards ("TakeDamage", 1);
+//			gameObject.transform.parent.GetComponent<PlayerController>().KnockBack(new Vector2(0, 10f));
+		}
+
 		return false;
 	}
 }
