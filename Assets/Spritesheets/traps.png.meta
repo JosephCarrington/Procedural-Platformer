@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: 13ecccf18bf1e41a7a704c63a99954c8
-timeCreated: 1489623871
+timeCreated: 1489790799
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: traps_0
+    21300002: traps_1
+    21300004: traps_2
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -83,6 +85,32 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
+        y: 48
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: traps_1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 48
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: traps_2
+      rect:
+        serializedVersion: 2
+        x: 32
         y: 48
         width: 16
         height: 16
