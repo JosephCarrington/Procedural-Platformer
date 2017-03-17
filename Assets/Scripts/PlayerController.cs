@@ -181,6 +181,13 @@ public class PlayerController : MonoBehaviour {
 
 	TileMapController map;
 	void OnCollisionEnter2D(Collision2D col) {
+		if (col.gameObject.layer == LayerMask.NameToLayer("BadWall")) {
+			TakeDamage (1);
+			Vector2 knockBackForce = gameObject.GetComponent<Rigidbody2D> ().velocity;
+			knockBackForce.x *= 2f;
+			knockBackForce.y = 20f;
+			KnockBack (knockBackForce);
+		}
 		if (col.relativeVelocity.magnitude > stamina) {
 			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
 				bool isWallBelow = map.IsWallAtCoords(
@@ -197,6 +204,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void OnCollisionStay2D(Collision2D col) {
+		if (col.gameObject.layer == LayerMask.NameToLayer("BadWall")) {
+			TakeDamage (1);
+			Vector2 knockBackForce = gameObject.GetComponent<Rigidbody2D> ().velocity;
+			knockBackForce.x *= 2f;
+			knockBackForce.y = 20f;
+			KnockBack (knockBackForce);
+		}
 		if (col.relativeVelocity.magnitude > stamina) {
 			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
 				bool isWallBelow = map.IsWallAtCoords(

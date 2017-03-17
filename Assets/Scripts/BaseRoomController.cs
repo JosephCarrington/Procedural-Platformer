@@ -22,8 +22,4 @@ public class BaseRoomController : MonoBehaviour {
 	public Vector2 GetCoords() {
 		return  new Vector2 (transform.position.x, transform.position.y);
 	}
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
