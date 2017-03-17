@@ -16,6 +16,12 @@ namespace Utils {
 			
 	}
 
+	public class Utils {
+		public static float GetBetweenValue(float min, float max, float inputValue) {
+			return(inputValue - min) / (max - min);
+		}
+	}
+
 	public class Room : MonoBehaviour {
 		public static Vector2 mapSize = Vector2.one * 256f;
 		public Coordinates pos, size, topLeft, topRight, bottomRight, bottomLeft;
