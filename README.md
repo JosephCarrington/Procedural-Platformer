@@ -32,6 +32,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Slime trails
 - [x] Slime stomp particles
 - [ ] If you have special item: Pick up slime by interacting with them, then throw them
+- [x] Slimeballs
 
 #### Items
 - [ ] Gloves
