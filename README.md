@@ -24,6 +24,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [x] Coin style collectibles
 - [ ] Something to DO wiht those coins
 - [ ] Hanging things to climb
+- [ ] More lava!
 
 #### Coins
 - [ ] Redo collectibles into Spelunky style chests
@@ -61,3 +62,8 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Collision particles
 - [x] Decorations
 - [ ] charactor
+
+#### Bugfixes
+- [ ] Jumping under spike sometimes makes you hit spike
+- [ ] Sometimes slimeballs fall through floors
+- [ ] Lava / player collisions work left to right
