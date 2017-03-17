@@ -14,8 +14,12 @@ public class CheckController : MonoBehaviour {
 	void Update () {
 		
 	}
-		
+
+	float lastKnockBackTime;
 	public bool Check() {
+		if (Time.time < lastKnockBackTime + 1f) {
+			return false;
+		}
 		int collidersTouchingBad = 0;
 		int collidersTouchingGood = 0;
 		foreach (Transform child in transform) {
@@ -33,12 +37,6 @@ public class CheckController : MonoBehaviour {
 		if (collidersTouchingGood > 0) {
 			return true;
 		}
-
-		if (collidersTouchingBad == transform.childCount) {
-//			gameObject.SendMessageUpwards ("TakeDamage", 1);
-//			gameObject.transform.parent.GetComponent<PlayerController>().KnockBack(new Vector2(0, 10f));
-		}
-
 		return false;
 	}
 }

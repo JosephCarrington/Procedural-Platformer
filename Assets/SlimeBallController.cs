@@ -21,7 +21,7 @@ public class SlimeBallController : MonoBehaviour {
 			return;
 		}
 		if (col.gameObject.tag == "Player") {
-			col.gameObject.SendMessage ("TransferToInventory", gameObject);
+//			col.gameObject.SendMessage ("TransferToInventory", gameObject);
 			GameObject.Destroy (gameObject);
 		}
 	}
