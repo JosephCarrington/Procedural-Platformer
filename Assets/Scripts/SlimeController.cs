@@ -15,6 +15,8 @@ public class SlimeController : MonoBehaviour {
 
 	public AnimationCurve xSpeed;
 
+	public GameObject slimeBall;
+
 	bool dead = false;
 
 	Direction currentDirection;
@@ -114,6 +116,10 @@ public class SlimeController : MonoBehaviour {
 		animator.SetBool ("Dead", true);
 		Destroy(gameObject.GetComponent<CircleCollider2D>());
 		dead = true;
+
+		// Slimeball
+		GameObject newSlimeBall = GameObject.Instantiate(slimeBall, new Vector3(transform.position.x, transform.position.y, -2), Quaternion.identity);
+		newSlimeBall.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-2f, 2f), Random.Range(2f, 4f)), ForceMode2D.Impulse);
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {

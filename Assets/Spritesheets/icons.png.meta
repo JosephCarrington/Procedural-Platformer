@@ -1,11 +1,14 @@
 fileFormatVersion: 2
 guid: 5f78b85055cb54939a790f05fbc270d1
-timeCreated: 1489544149
+timeCreated: 1489704847
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: doubleJump
     21300002: heart
+    21300004: icons_0
+    21300006: icons_1
+    21300008: icons_2
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -80,7 +83,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: doubleJump
+      name: icons_0
       rect:
         serializedVersion: 2
         x: 0
@@ -93,11 +96,24 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: heart
+      name: icons_1
       rect:
         serializedVersion: 2
         x: 16
         y: 48
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: icons_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
         width: 16
         height: 16
       alignment: 0
