@@ -27,9 +27,9 @@ public class BounceTrapController : MonoBehaviour {
 			newVel.y = 0;
 			col.gameObject.GetComponent<Rigidbody2D> ().velocity = newVel;
 			col.gameObject.GetComponent<Rigidbody2D> ().AddForce (Vector2.up * 40f, ForceMode2D.Impulse);
-			Vector2 newColliderOffset = gameObject.GetComponent<BoxCollider2D> ().offset;
-			newColliderOffset.y = 0.12f;
-			gameObject.GetComponent<BoxCollider2D> ().offset = newColliderOffset;
+//			Vector2 newColliderOffset = gameObject.GetComponent<BoxCollider2D> ().offset;
+//			newColliderOffset.y = 0.12f;
+//			gameObject.GetComponent<BoxCollider2D> ().offset = newColliderOffset;
 			animator.SetBool ("Fire", true);
 		}
 	}
