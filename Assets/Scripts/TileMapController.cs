@@ -36,6 +36,19 @@ public class TileMapController : MonoBehaviour {
 		case 4:
 		case 5:
 		case 6:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	public bool IsLavaAtCoords(Coordinates coords) {
+		if (coords.x < 0 || coords.x >= map.width || coords.y < 0 || coords.y >= map.height) {
+			print("Coords out of bounds : " + coords.ToString());
+			return false;
+		}
+		int wall = map.GetTile (coords.x, coords.y, 1);
+		switch (wall) {
 		case 8:
 			return true;
 		default:

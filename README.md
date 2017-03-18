@@ -42,7 +42,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Rockfall trap
 - [x] Bounce the player around trap
 - [x] Spikes
-- [ ] More (ceiling) spikes
+- [x] More (ceiling) spikes
 
 #### HP
 - [x] HP
@@ -52,7 +52,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Better death implementation (so the player knows why they died)
 - [x] Minimap
 - [x] Minimap biggener
-- [ ] Make things not spawn in lava
+- [x] Make things not spawn in lava
 - [ ] Better screen resolution handling
 - [ ] Dial in controls
 - [ ] Implement 'Reality Bubble'
@@ -69,3 +69,4 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Jumping under spike sometimes makes you hit spike
 - [ ] Sometimes slimeballs fall through floors
 - [x] Lava / player collisions work left to right
+- [ ] Bounce trap collisions need to be reworked to avoid taking fall damage
