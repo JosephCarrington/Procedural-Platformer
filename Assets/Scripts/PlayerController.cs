@@ -291,7 +291,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Die() {
-//		Application.LoadLevel (0);
+		StartCoroutine (ReloadScene ());
+	}
+
+	IEnumerator ReloadScene(){
+		yield return new WaitForSeconds (knockBackControlLoss);
 		SceneManager.LoadScene(0);
 	}
 }
