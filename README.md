@@ -40,7 +40,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 
 ### Traps!
 - [ ] Rockfall trap
-- [ ] Bounce the player around trap
+- [x] Bounce the player around trap
 - [x] Spikes
 
 #### HP
