@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour {
 		if (col.gameObject.layer == LayerMask.NameToLayer("BadWall")) {
 			TakeDamage (1);
 			Vector2 knockBackForce = gameObject.GetComponent<Rigidbody2D> ().velocity;
-			knockBackForce.x *= 2f;
+//			knockBackForce.x *= 2f;
 			knockBackForce.y = 20f;
 			KnockBack (knockBackForce);
 		}
@@ -197,7 +197,10 @@ public class PlayerController : MonoBehaviour {
 					)
 				);
 				if (isWallBelow) {
-					Die ();
+					TakeDamage (1);
+					Vector2 knockBackStrength = gameObject.GetComponent<Rigidbody2D> ().velocity;
+					knockBackStrength.x = -knockBackStrength.x;
+					KnockBack (knockBackStrength);
 				}
 			}
 		}
@@ -220,7 +223,10 @@ public class PlayerController : MonoBehaviour {
 					)
 				);
 				if (isWallBelow) {
-					Die ();
+					TakeDamage (1);
+					Vector2 knockBackStrength = gameObject.GetComponent<Rigidbody2D> ().velocity;
+					knockBackStrength.x = -knockBackStrength.x;
+					KnockBack (knockBackStrength);
 				}
 			}
 		}
@@ -258,6 +264,9 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 		StartCoroutine (BecomeInvincible ());
+		Vector2 newVel = gameObject.GetComponent<Rigidbody2D> ().velocity;
+		newVel.y = 0;
+		gameObject.GetComponent<Rigidbody2D> ().velocity = newVel;
 		gameObject.GetComponent<Rigidbody2D> ().AddForce (knockBackForce, ForceMode2D.Impulse);
 		lastKnockBack = Time.time;
 	}

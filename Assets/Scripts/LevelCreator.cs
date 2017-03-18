@@ -76,6 +76,9 @@ public class LevelCreator : MonoBehaviour {
 	public GameObject exit;
 
 	public float chanceToSpawnSpike = 0.75f;
+	public float chanceToSpawnTrap = 0.1f;
+
+	public GameObject[] trapPrefabs;
 
 
 	IEnumerator CreateRooms(int numRooms) {
@@ -334,7 +337,7 @@ public class LevelCreator : MonoBehaviour {
 			}
 		}
 			
-		// Ground deco, enemies, spikes
+		// Ground deco, enemies, spikes, traps
 		foreach(Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
@@ -352,6 +355,12 @@ public class LevelCreator : MonoBehaviour {
 						spawnedSpike = true;
 //						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y));
 						GameObject newSpike = GameObject.Instantiate(spike, new Vector3(x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+					}
+
+					bool spawnedTrap = false;
+					if (!spawnedSpike && room != entranceRoom && Random.value < chanceToSpawnTrap) {
+						spawnedTrap = true;
+						GameObject newTrap = GameObject.Instantiate(trapPrefabs[Random.Range(0, trapPrefabs.Length)], new Vector3(x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
 					}
 
 					if(!spawnedSpike && Random.value < chanceToSpawnGroundDecoration) {
