@@ -205,32 +205,32 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
-
-	void OnCollisionStay2D(Collision2D col) {
-		if (col.gameObject.layer == LayerMask.NameToLayer("BadWall")) {
-			TakeDamage (1);
-			Vector2 knockBackForce = gameObject.GetComponent<Rigidbody2D> ().velocity;
-			knockBackForce.x *= 2f;
-			knockBackForce.y = 20f;
-			KnockBack (knockBackForce);
-		}
-		if (col.relativeVelocity.magnitude > stamina) {
-			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
-				bool isWallBelow = map.IsWallAtCoords(
-					new Coordinates(
-						Mathf.RoundToInt(gameObject.transform.position.x) + 128,
-						Mathf.RoundToInt(gameObject.transform.position.y) + 128 - 1
-					)
-				);
-				if (isWallBelow) {
-					TakeDamage (1);
-					Vector2 knockBackStrength = gameObject.GetComponent<Rigidbody2D> ().velocity;
-					knockBackStrength.x = -knockBackStrength.x;
-					KnockBack (knockBackStrength);
-				}
-			}
-		}
-	}
+//
+//	void OnCollisionStay2D(Collision2D col) {
+//		if (col.gameObject.layer == LayerMask.NameToLayer("BadWall")) {
+//			TakeDamage (1);
+//			Vector2 knockBackForce = gameObject.GetComponent<Rigidbody2D> ().velocity;
+//			knockBackForce.x *= 2f;
+//			knockBackForce.y = 20f;
+//			KnockBack (knockBackForce);
+//		}
+//		if (col.relativeVelocity.magnitude > stamina) {
+//			if (Time.time > lastDoubleJumpTime + doubleJumpFallDeathDelay) {
+//				bool isWallBelow = map.IsWallAtCoords(
+//					new Coordinates(
+//						Mathf.RoundToInt(gameObject.transform.position.x) + 128,
+//						Mathf.RoundToInt(gameObject.transform.position.y) + 128 - 1
+//					)
+//				);
+//				if (isWallBelow) {
+//					TakeDamage (1);
+//					Vector2 knockBackStrength = gameObject.GetComponent<Rigidbody2D> ().velocity;
+//					knockBackStrength.x = -knockBackStrength.x;
+//					KnockBack (knockBackStrength);
+//				}
+//			}
+//		}
+//	}
 
 	public float enemyBounceAmount = 10f;
 	public void BounceOffEnemy(float factor) {
