@@ -341,7 +341,7 @@ public class LevelCreator : MonoBehaviour {
 		foreach(Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
-				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
 					
 					bool spawnedEnemy = false;
 					if (room != entranceRoom && Random.value < chanceToSpawnEnemy) {
@@ -378,6 +378,18 @@ public class LevelCreator : MonoBehaviour {
 					}
 
 
+				}
+			}
+			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
+				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
+					bool spawnedSpike = false;
+					if (room != entranceRoom && Random.value < chanceToSpawnSpike) {
+						spawnedSpike = true;
+						GameObject newSpike = GameObject.Instantiate(spike, new Vector3(x - mapSize.x / 2, room.topLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+						Vector2 newScale = newSpike.transform.localScale;
+						newScale.y = -1;
+						newSpike.transform.localScale = newScale;
+					}
 				}
 			}
 		}
@@ -551,6 +563,13 @@ public class LevelCreator : MonoBehaviour {
 
 	void SpawnExitAtCoords(Coordinates c) {
 		
+	}
+
+	bool IsWallOrLavaAtCoords(Coordinates c) {
+		if (map.IsWallAtCoords (c) || map.IsLavaAtCoords (c)) {
+			return true;
+		}
+		return false;
 	}
 
 
