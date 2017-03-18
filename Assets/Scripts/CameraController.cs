@@ -13,7 +13,6 @@ public class CameraController : MonoBehaviour {
 
 	void Start () {
 		player = GameObject.Find ("Player");
-		score = GameObject.Find ("Score").GetComponent<Text>();
 	}
 
 	void Update() {
@@ -37,9 +36,9 @@ public class CameraController : MonoBehaviour {
 		transform.position = new Vector3 (newPos.x, newPos.y, transform.position.z);
 	}
 
-	void SetScore(int newScore) {
-		score.text = newScore.ToString();
-	}
+//	void SetScore(int newScore) {
+//		score.text = newScore.ToString();
+//	}
 
 
 }
