@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour {
 		transform.position = new Vector3 (newPos.x, newPos.y, transform.position.z);
 	}
 
-//	void SetScore(int newScore) {
+//		void SetScore(int newScore) {
 //		score.text = newScore.ToString();
 //	}
 
