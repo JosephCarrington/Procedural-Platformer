@@ -110,8 +110,15 @@ public class TileMapController : MonoBehaviour {
 		map.SetTile (c.x, c.y, 0, Random.Range (4, 7));
 	}
 
+	public int spikeLayer = 3;
 	public void CreateSpikeAt(Coordinates c) {
-		map.SetTile (c.x, c.y, 2, 10);
+		map.SetTile (c.x, c.y, spikeLayer, 10);
+	}
+
+	public int slimeLayer = 4;
+	public void CreateSlimeAt(Coordinates c) {
+//		CreateEmptyTileAt (c);
+		map.SetTile (c.x, c.y, slimeLayer, 12);
 	}
 	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
 //		Color lineColor = a.x != b.x ? Color.red : Color.blue;

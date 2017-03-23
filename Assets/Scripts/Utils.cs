@@ -20,6 +20,8 @@ namespace Utils {
 		public static float GetBetweenValue(float min, float max, float inputValue) {
 			return(inputValue - min) / (max - min);
 		}
+		public static Vector2 mapSize = Vector2.one * 256f;
+
 	}
 
 	public class Room : MonoBehaviour {

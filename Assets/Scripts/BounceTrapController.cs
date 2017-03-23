@@ -18,7 +18,7 @@ public class BounceTrapController : MonoBehaviour {
 		if (sprung && col.gameObject.GetComponent<Rigidbody2D>().velocity.y >= 0) {
 			return;
 		}
-		if (col.gameObject.tag == "Player") {
+		if (col.gameObject.tag == "Player" || col.gameObject.GetComponent<Rigidbody2D>() != null) {
 			if (sprung) {
 				animator.SetTrigger ("Refire");
 			}

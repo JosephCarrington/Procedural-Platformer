@@ -10,22 +10,11 @@ using Delaunay.Geo;
 
 public class LevelCreator : MonoBehaviour {
 
-	// Use this for initialization
-	public tk2dSprite baseWall;
-	public Material pixelSnap;
 	GameObject player;
-
-	enum Tile {
-		Blank,
-		Wall
-	}
-
-	Tile[,] tiles;
-
-	public tk2dTileMap tileMap;
+	tk2dTileMap tileMap;
+	public LevelSettings level;
 
 
-	public int roomCount = 100;
 	GameObject[] rooms;
 	List<GameObject> finalRooms;
 	TileMapController map;
@@ -36,59 +25,32 @@ public class LevelCreator : MonoBehaviour {
 		map = GameObject.Find ("TileMap").GetComponent<TileMapController> ();
 		player = GameObject.Find ("Player");
 		player.gameObject.SetActive (false);
-		StartCoroutine(CreateRooms(roomCount));
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+		StartCoroutine(CreateRooms(level.roomCount));
 
-	public int minWidth,
-		minHeight,
-		widthVarience,
-		heightVarience;
+		groundDecorations = new GameObject[(int)level.mapSize.x, (int)level.mapSize.y];
+	}
 
 	float meanHeight,
 		meanWidth;
-	public GameObject defaultRoom;
-	Vector2[] mainRoomPoints;
 
-	public Color mainRoomColor,
-		connectingRoomColor,
-		corridorColor;
+	Vector2[] mainRoomPoints;
 
 	private List<LineSegment> m_delaunayTriangulation,
 		m_spanningTree,
 		corridors;
 
-	public float chanceToAddExtraCorridor = 0.1f;
-
 	List<Vector2> midPoints;
-	public int lavaDepth = 4;
 
-
-	public float chanceToSpawnGroundDecoration = 0.5f;
-
-	public GameObject[] groundDecorationPrefabs;
-	private GameObject[,] groundDecorations = new GameObject[(int)mapSize.x, (int)mapSize.y];
-
-	public GameObject exit;
-
-	public float chanceToSpawnSpike = 0.75f;
-	public float chanceToSpawnTrap = 0.1f;
-
-	public GameObject[] trapPrefabs;
-
+	GameObject[,] groundDecorations;
 
 	IEnumerator CreateRooms(int numRooms) {
-		meanWidth = minWidth + (widthVarience / 2);
-		meanHeight = minHeight + (heightVarience / 2);
-		rooms = new GameObject[roomCount];
+		meanWidth = level.minWidth + (level.widthVariance / 2);
+		meanHeight = level.minWidth + (level.heightVariance / 2);
+		rooms = new GameObject[level.roomCount];
 		Time.fixedDeltaTime = 0.001f;
 		for (int i = 0; i < numRooms; i++) {
-			int wv = Random.Range (0, widthVarience);
-			int hv = Random.Range (0, heightVarience);
+			int wv = Random.Range (0, level.widthVariance);
+			int hv = Random.Range (0, level.heightVariance);
 			// only round numbers please
 			if (wv % 2 != 0) {
 				wv++;
@@ -96,9 +58,9 @@ public class LevelCreator : MonoBehaviour {
 			if (hv % 2 != 0) {
 				hv++;
 			}
-			GameObject newRoom = GameObject.Instantiate (defaultRoom);
-			newRoom.transform.position = Random.insideUnitCircle * (mapSize.x / 4);
-			newRoom.transform.localScale = new Vector3 (minWidth + wv, minHeight + hv, 1);
+			GameObject newRoom = GameObject.Instantiate (level.defaultRoom);
+			newRoom.transform.position = Random.insideUnitCircle * (level.mapSize.x / 4);
+			newRoom.transform.localScale = new Vector3 (level.minWidth + wv, level.minHeight + hv, 1);
 			newRoom.layer = LayerMask.NameToLayer ("UnusedRoom");
 			rooms [i] = newRoom;
 		}
@@ -126,7 +88,6 @@ public class LevelCreator : MonoBehaviour {
 			newPos.y = Mathf.RoundToInt (newPos.y);
 			room.transform.position = newPos;
 			if (room.transform.localScale.x > (meanWidth * 1.1f) && room.transform.localScale.y > (meanHeight * 1.1f)) {
-				room.GetComponent<SpriteRenderer> ().color = mainRoomColor;
 				room.layer = LayerMask.NameToLayer ("MainRoom");
 				room.name = "Main Room";
 				mainRooms.Add (room);
@@ -148,7 +109,7 @@ public class LevelCreator : MonoBehaviour {
 		m_spanningTree = v.SpanningTree (KruskalType.MINIMUM);
 		corridors = m_spanningTree;
 		for (int i = 0; i < m_delaunayTriangulation.Count; i++) {
-			if (Random.value < chanceToAddExtraCorridor) {
+			if (Random.value < level.chanceToAddExtraCorridor) {
 				corridors.Add(m_delaunayTriangulation[i]);
 			}
 		}
@@ -293,11 +254,11 @@ public class LevelCreator : MonoBehaviour {
 				currentYCheck--;
 			}
 		}
-		Vector2 newPlayerPos = new Vector2 (playerPos.x - (mapSize.x / 2), currentYCheck - (mapSize.y / 2) + 1);
+		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1);
 		player.transform.position = newPlayerPos;
 
 		foreach (Transform child in transform) {
-			if (Random.value < chanceToAttemptLava) {
+			if (Random.value < level.chanceToAttemptLava) {
 				Room room = child.GetComponent<Room> ();
 				if(room != entranceRoom) {
 
@@ -312,8 +273,8 @@ public class LevelCreator : MonoBehaviour {
 					Coordinates leftCheck = new Coordinates(bottomLeftWall.x, bottomLeftWall.y),
 					rightCheck = new Coordinates(bottomRightWall.x, bottomRightWall.y);
 
-					leftCheck.y += lavaDepth;
-					rightCheck.y += lavaDepth;
+					leftCheck.y += level.lavaDepth;
+					rightCheck.y += level.lavaDepth;
 
 					if(map.DoesContinuousWallExist(bottomLeftWall, bottomRightWall)) {
 						
@@ -325,7 +286,7 @@ public class LevelCreator : MonoBehaviour {
 						);
 						if (leftColHeight > 0 && rightColHeight > 0) {
 							int lavaHeight = leftColHeight > rightColHeight ? rightColHeight : leftColHeight;
-							lavaHeight = lavaHeight > lavaDepth ? lavaDepth : lavaHeight;
+							lavaHeight = lavaHeight > level.lavaDepth ? level.lavaDepth : lavaHeight;
 							map.CreateLava (
 								room.bottomLeft,
 								new Coordinates (room.bottomRight.x, room.bottomRight.y + lavaHeight - 1)
@@ -344,29 +305,29 @@ public class LevelCreator : MonoBehaviour {
 				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
 					
 					bool spawnedEnemy = false;
-					if (room != entranceRoom && Random.value < chanceToSpawnEnemy) {
-						GameObject newEnemy = GameObject.Instantiate (enemyPrefabs [Random.Range(0, enemyPrefabs.Length)], new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
+						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 						enemies.Add (newEnemy);
 						spawnedEnemy = true;
 					}
 
 					bool spawnedSpike = false;
-					if (!spawnedEnemy && room != entranceRoom && Random.value < chanceToSpawnSpike) {
+					if (!spawnedEnemy && room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
 						spawnedSpike = true;
 //						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y));
-						GameObject newSpike = GameObject.Instantiate(spike, new Vector3(x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+						GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 					}
 
-					bool spawnedTrap = false;
-					if (!spawnedSpike && room != entranceRoom && Random.value < chanceToSpawnTrap) {
-						spawnedTrap = true;
-						GameObject newTrap = GameObject.Instantiate(trapPrefabs[Random.Range(0, trapPrefabs.Length)], new Vector3(x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+//					bool spawnedTrap = false;
+					if (!spawnedSpike && room != entranceRoom && Random.value < level.chanceToSpawnTrap) {
+//						spawnedTrap = true;
+						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 					}
 
-					if(!spawnedSpike && Random.value < chanceToSpawnGroundDecoration) {
+					if(!spawnedSpike && Random.value < level.chanceToSpawnGroundDecoration) {
 						GameObject newDeco = GameObject.Instantiate (
-							groundDecorationPrefabs [Random.Range (0, groundDecorationPrefabs.Length)],
-							new Vector3 (x - mapSize.x / 2, room.bottomLeft.y - mapSize.y / 2),
+							level.groundDecorations [Random.Range (0, level.groundDecorations.Length)],
+							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2),
 							Quaternion.identity
 						);
 						if (Random.value > 0.5) {
@@ -382,10 +343,10 @@ public class LevelCreator : MonoBehaviour {
 			}
 			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
 				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
-					bool spawnedSpike = false;
-					if (room != entranceRoom && Random.value < chanceToSpawnSpike) {
-						spawnedSpike = true;
-						GameObject newSpike = GameObject.Instantiate(spike, new Vector3(x - mapSize.x / 2, room.topLeft.y - mapSize.y / 2, -1), Quaternion.identity);
+//					bool spawnedSpike = false;
+					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
+//						spawnedSpike = true;
+						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.topLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 						Vector2 newScale = newSpike.transform.localScale;
 						newScale.y = -1;
 						newSpike.transform.localScale = newScale;
@@ -403,7 +364,7 @@ public class LevelCreator : MonoBehaviour {
 			if (room != entranceRoom) {
 				// Don't spawn the exit in a room that is too small
 				if (room.size.x >= minExitRoomSize.x && room.size.y >= minExitRoomSize.y) {
-					GameObject newExit = GameObject.Instantiate (exit, new Vector3 (room.pos.x - (mapSize.x / 2) + 0.5f, room.pos.y - ((mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
+					GameObject.Instantiate (level.exit, new Vector3 (room.pos.x - (level.mapSize.x / 2) + 0.5f, room.pos.y - ((level.mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
 					// Make a floor beneath it
 					map.CreateWallTileAt(new Coordinates(room.pos.x, room.pos.y -1));
 					map.CreateWallTileAt(new Coordinates(room.pos.x + 1, room.pos.y -1));
@@ -428,38 +389,17 @@ public class LevelCreator : MonoBehaviour {
 
 	}
 
-	public GameObject spike;
-
-	public static Vector3 mapSize = Vector3.one * 256;
-	public GameObject coin;
-	public float chanceToSpawnCoin = 0.01f;
-	public float chanceToAttemptLava = 1f;
-
-
 	void CarveOutRoom(GameObject room) {
 //		Rect bounds = GetRect (room.transform);
 		// the points should be offset from the center of the levelBounds, so that levelBOunds center is in the middle of the map
-		Vector3 bottomLeft = room.transform.position;
-		Vector3 topRight = room.transform.position;
-		bottomLeft -= room.transform.lossyScale / 2;
-		topRight += room.transform.lossyScale / 2;
+		Vector2 bottomLeft = room.transform.position;
+		Vector2 topRight = room.transform.position;
+		bottomLeft -= (Vector2)room.transform.lossyScale / 2;
+		topRight += (Vector2)room.transform.lossyScale / 2;
 
-
-
-		bottomLeft += mapSize / 2;
-		topRight += mapSize / 2;
+		bottomLeft += level.mapSize / 2;
+		topRight += level.mapSize / 2;
 		map.CarveOutRoom (bottomLeft, topRight);
-		bottomLeft -= mapSize / 2;
-		topRight -= mapSize / 2;
-
-		// Coins and Enemies
-		for (int x = (int)bottomLeft.x; x < (int)topRight.x; x++) {
-			for (int y = (int)bottomLeft.y; y < (int)topRight.y; y++) {	
-				if (Random.value < chanceToSpawnCoin) {
-					GameObject.Instantiate (coin, new Vector3 (x, y, -1), Quaternion.identity);
-				}
-			}
-		}
 	}
 		
 	void OnDrawGizmos() {
@@ -525,12 +465,11 @@ public class LevelCreator : MonoBehaviour {
 
 	void CreateCorridor(Vector2 start, Vector2 end) {
 		Vector2 midPoint = (start + end) / 2;
-		GameObject corridor = GameObject.Instantiate (defaultRoom, gameObject.transform);
+		GameObject corridor = GameObject.Instantiate (level.defaultRoom, gameObject.transform);
 		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
 		corridor.GetComponent<Rigidbody2D> ().isKinematic = true;
 		corridor.name = "Corridor";
 		corridor.transform.position = midPoint;
-		corridor.GetComponent<SpriteRenderer> ().color = corridorColor;
 		corridor.layer = LayerMask.NameToLayer ("Corridor");
 
 		if (start.x == end.x) {
@@ -551,15 +490,11 @@ public class LevelCreator : MonoBehaviour {
 			if (hit.transform.gameObject.layer != LayerMask.NameToLayer ("UnusedRoom")) {
 				continue;
 			}
-			hit.transform.gameObject.GetComponent<SpriteRenderer> ().color = connectingRoomColor;
 			hit.transform.gameObject.layer = LayerMask.NameToLayer ("ConnectingRoom");
 		}
 	}
-
-	public GameObject[] enemyPrefabs;
+		
 	private List<GameObject> enemies = new List<GameObject>();
-
-	public float chanceToSpawnEnemy = 0.01f;
 
 	void SpawnExitAtCoords(Coordinates c) {
 		
