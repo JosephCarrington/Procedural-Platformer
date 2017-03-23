@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Collider2D))]
+//[RequireComponent(typeof(SpriteRenderer))]
+//[RequireComponent(typeof(Collider2D))]
 public class InventoryItemController : MonoBehaviour {
 
 	// Use this for initialization
@@ -32,6 +32,7 @@ public class InventoryItemController : MonoBehaviour {
 			owner = newOwner;
 			newOwner.GetComponent<InventoryController> ().AddToInventory (gameObject);
 			Destroy (gameObject.GetComponent<Collider2D> ());
+			gameObject.GetComponent<SpriteRenderer> ().enabled = false;
 		}
 	}
 
