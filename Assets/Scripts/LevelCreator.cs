@@ -315,13 +315,13 @@ public class LevelCreator : MonoBehaviour {
 					if (!spawnedEnemy && room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
 						spawnedSpike = true;
 //						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y));
-						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+						GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 					}
 
-					bool spawnedTrap = false;
+//					bool spawnedTrap = false;
 					if (!spawnedSpike && room != entranceRoom && Random.value < level.chanceToSpawnTrap) {
-						spawnedTrap = true;
-						GameObject newTrap = GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+//						spawnedTrap = true;
+						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 					}
 
 					if(!spawnedSpike && Random.value < level.chanceToSpawnGroundDecoration) {
@@ -343,9 +343,9 @@ public class LevelCreator : MonoBehaviour {
 			}
 			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
 				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
-					bool spawnedSpike = false;
+//					bool spawnedSpike = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
-						spawnedSpike = true;
+//						spawnedSpike = true;
 						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.topLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 						Vector2 newScale = newSpike.transform.localScale;
 						newScale.y = -1;
@@ -364,7 +364,7 @@ public class LevelCreator : MonoBehaviour {
 			if (room != entranceRoom) {
 				// Don't spawn the exit in a room that is too small
 				if (room.size.x >= minExitRoomSize.x && room.size.y >= minExitRoomSize.y) {
-					GameObject newExit = GameObject.Instantiate (level.exit, new Vector3 (room.pos.x - (level.mapSize.x / 2) + 0.5f, room.pos.y - ((level.mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
+					GameObject.Instantiate (level.exit, new Vector3 (room.pos.x - (level.mapSize.x / 2) + 0.5f, room.pos.y - ((level.mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
 					// Make a floor beneath it
 					map.CreateWallTileAt(new Coordinates(room.pos.x, room.pos.y -1));
 					map.CreateWallTileAt(new Coordinates(room.pos.x + 1, room.pos.y -1));
