@@ -45,8 +45,6 @@ public class PlayerController : MonoBehaviour {
 		hpDisplay = GameObject.Find ("Hearts");
 		hpDisplay.GetComponent<HeartPanelController> ().SetHeartCount (hp);
 
-		UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
-
 		map = GameObject.Find("TileMap").GetComponent<TileMapController>();
 
 		regularColor = gameObject.GetComponent<SpriteRenderer> ().color;
@@ -120,16 +118,15 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		// Double Jumping
-		if (doubleJumps > 0 && doubleJumping) {
-			doubleJumping = false;
-			lastJumpTime = Time.time;
-			lastDoubleJumpTime = Time.time;
-			newVel.y = jumpStrength * 2;
-			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
-			doubleJumps--;
-			UpdateInventoryCount (InventoryItem.DoubleJump, doubleJumps);
-		}
+//		// Double Jumping
+//		if (doubleJumps > 0 && doubleJumping) {
+//			doubleJumping = false;
+//			lastJumpTime = Time.time;
+//			lastDoubleJumpTime = Time.time;
+//			newVel.y = jumpStrength * 2;
+//			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
+//			doubleJumps--;
+//		}
 
 		if ((!jump && !jumping) && (lefted || righted)) {
 			// WE ARE PRESSING ON A WALL
@@ -155,22 +152,6 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 		body.velocity = newVel;
-	}
-		
-	public enum InventoryItem {
-		DoubleJump
-	}
-	void UpdateInventoryCount(InventoryItem item, int newCount) {
-		GameObject countObject = null;
-		switch (item) {
-		case InventoryItem.DoubleJump: 
-			countObject = GameObject.Find ("DoubleJump Amount");
-			break;
-		}
-
-		Text countText = countObject.GetComponent<Text>();
-		countText.text = newCount.ToString ();
-
 	}
 
 	float GetBetweenValue(float min, float max, float inputValue) {
@@ -291,7 +272,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Die() {
-//		Application.LoadLevel (0);
+		StartCoroutine (ReloadScene ());
+	}
+
+	IEnumerator ReloadScene(){
+		yield return new WaitForSeconds (knockBackControlLoss);
 		SceneManager.LoadScene(0);
 	}
 }
