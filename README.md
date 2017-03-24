@@ -66,7 +66,7 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] charactor
 
 #### Bugfixes
-- [ ] Jumping under spike sometimes makes you hit spike
+- [x] Jumping under spike sometimes makes you hit spike
 - [ ] Sometimes slimeballs fall through floors
 - [x] Lava / player collisions work left to right
-- [ ] Bounce trap collisions need to be reworked to avoid taking fall damage
+- [x] Bounce trap collisions need to be reworked to avoid taking fall damage
