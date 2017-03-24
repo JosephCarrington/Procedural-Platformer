@@ -118,15 +118,15 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		// Double Jumping
-		if (doubleJumps > 0 && doubleJumping) {
-			doubleJumping = false;
-			lastJumpTime = Time.time;
-			lastDoubleJumpTime = Time.time;
-			newVel.y = jumpStrength * 2;
-			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
-			doubleJumps--;
-		}
+//		// Double Jumping
+//		if (doubleJumps > 0 && doubleJumping) {
+//			doubleJumping = false;
+//			lastJumpTime = Time.time;
+//			lastDoubleJumpTime = Time.time;
+//			newVel.y = jumpStrength * 2;
+//			transform.Find ("DoubleJump Particles").GetComponent<ParticleSystem> ().Emit (10);
+//			doubleJumps--;
+//		}
 
 		if ((!jump && !jumping) && (lefted || righted)) {
 			// WE ARE PRESSING ON A WALL
