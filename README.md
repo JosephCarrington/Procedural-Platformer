@@ -26,6 +26,9 @@ Based on the ideas from here: http://www.gamasutra.com/blogs/AAdonaac/20150903/2
 - [ ] Hanging things to climb
 - [ ] More lava!
 
+#### Vaults
+- [ ] Vault POC
+
 #### Coins
 - [ ] Redo collectibles into Spelunky style chests
 
