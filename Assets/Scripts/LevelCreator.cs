@@ -43,6 +43,8 @@ public class LevelCreator : MonoBehaviour {
 
 	GameObject[,] groundDecorations;
 
+	public GameObject boostPrefab;
+
 	IEnumerator CreateRooms(int numRooms) {
 		meanWidth = level.minWidth + (level.widthVariance / 2);
 		meanHeight = level.minWidth + (level.heightVariance / 2);
@@ -256,6 +258,12 @@ public class LevelCreator : MonoBehaviour {
 		}
 		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1);
 		player.transform.position = newPlayerPos;
+		Vector3 boostPos = newPlayerPos;
+		boostPos.z = -2;
+		boostPos.y += 3;
+		for (int i = 0; i < 3; i++) {
+			GameObject.Instantiate (boostPrefab, boostPos, Quaternion.identity);
+		}
 
 		foreach (Transform child in transform) {
 			if (Random.value < level.chanceToAttemptLava) {
