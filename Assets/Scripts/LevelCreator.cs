@@ -47,16 +47,28 @@ public class LevelCreator : MonoBehaviour {
 	GameObject[,] groundDecorations;
 
 	public GameObject boostPrefab;
-
+	private Vault[] vaults;
 	IEnumerator CreateRooms(int numRooms) {
+		vaults = new Vault[level.vaults.Length];
+		int vaultCount = 0;
 		foreach (TextAsset vault in level.vaults) {
 			XmlDocument vaultData = new XmlDocument ();
 			vaultData.LoadXml (vault.text);
 
 			XmlElement root = vaultData ["map"];
-			print (root.GetAttribute("width"));
+			int width =  int.Parse(root.GetAttribute ("width"));
+			int height = int.Parse(root.GetAttribute ("height"));
+			Coordinates size = new Coordinates (width, height);
 
+			string csv = root.GetElementsByTagName("data")[0].InnerText;
+			csv = csv.Replace ("\n", "");
+			Vault va = new Vault();
+			va.size = size;
+			va.csv = csv;
+			vaults [vaultCount] = va;
+			vaultCount++;
 		}
+
 		meanWidth = level.minWidth + (level.widthVariance / 2);
 		meanHeight = level.minWidth + (level.heightVariance / 2);
 		rooms = new GameObject[level.roomCount];
