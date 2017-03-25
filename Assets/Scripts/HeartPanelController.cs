@@ -29,7 +29,6 @@ public class HeartPanelController : MonoBehaviour {
 	}
 
 	public void SetHeartCount(int hp) {
-		print ("Settings hearts");
 		for(int i = 0; i < hearts.Length; i++) {
 			Color newColor = hearts[i].GetComponent<Image> ().color;
 			newColor.a = i < hp ? 1 : 0;

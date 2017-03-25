@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml;
+using System.IO;
 
 public class RoomCreationSettings {
 
@@ -19,6 +21,8 @@ public class LevelSettings : ScriptableObject {
 	[Range(0f, 1f)]
 	public float chanceToAddExtraCorridor = 0.25f;
 
+	[Header("Vaults")]
+	public TextAsset[] vaults;
 
 	[Header("Ground Decoration")]
 	[Range(0f, 1f)]

@@ -8,6 +8,9 @@ using Utils;
 using Delaunay;
 using Delaunay.Geo;
 
+using System.Xml;
+using System.Xml.Serialization;
+
 public class LevelCreator : MonoBehaviour {
 
 	GameObject player;
@@ -46,6 +49,14 @@ public class LevelCreator : MonoBehaviour {
 	public GameObject boostPrefab;
 
 	IEnumerator CreateRooms(int numRooms) {
+		foreach (TextAsset vault in level.vaults) {
+			XmlDocument vaultData = new XmlDocument ();
+			vaultData.LoadXml (vault.text);
+
+			XmlElement root = vaultData ["map"];
+			print (root.GetAttribute("width"));
+
+		}
 		meanWidth = level.minWidth + (level.widthVariance / 2);
 		meanHeight = level.minWidth + (level.heightVariance / 2);
 		rooms = new GameObject[level.roomCount];
@@ -80,7 +91,6 @@ public class LevelCreator : MonoBehaviour {
 		}
 
 		Time.fixedDeltaTime = 0.02f;
-		print ("all asleep at " + Time.time);
 		// Round positions of rooms to int and get 'main rooms'?
 		List<GameObject> mainRooms = new List<GameObject>();
 		foreach (GameObject room in rooms) {
