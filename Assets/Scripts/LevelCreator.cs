@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.IO;
 
 using Utils;
+using Vaults;
 
 using Delaunay;
 using Delaunay.Geo;
-
-using System.Xml;
-using System.Xml.Serialization;
 
 public class LevelCreator : MonoBehaviour {
 
@@ -47,28 +46,17 @@ public class LevelCreator : MonoBehaviour {
 	GameObject[,] groundDecorations;
 
 	public GameObject boostPrefab;
-	private Vault[] vaults;
-	IEnumerator CreateRooms(int numRooms) {
-		vaults = new Vault[level.vaults.Length];
-		int vaultCount = 0;
-		foreach (TextAsset vault in level.vaults) {
-			XmlDocument vaultData = new XmlDocument ();
-			vaultData.LoadXml (vault.text);
+	private List<Vault> floatingVaults =  new List<Vault>();
+	private List<Vault> entranceVaults = new List<Vault> ();
 
-			XmlElement root = vaultData ["map"];
-			int width =  int.Parse(root.GetAttribute ("width"));
-			int height = int.Parse(root.GetAttribute ("height"));
-			Coordinates size = new Coordinates (width, height);
+	private void ReadVaults() {
+		foreach (string file in Directory.GetFiles(Application.dataPath + "/Vaults", "*.tmx", SearchOption.AllDirectories))
+		{ 
+			Vault newVault = Utils.Utils.XMLToVault (file);
+		}	
+	}
 
-			string csv = root.GetElementsByTagName("data")[0].InnerText;
-			csv = csv.Replace ("\n", "");
-			Vault va = new Vault();
-			va.size = size;
-			va.csv = csv;
-			vaults [vaultCount] = va;
-			vaultCount++;
-		}
-
+	private IEnumerator CreateRects(int numRooms) {
 		meanWidth = level.minWidth + (level.widthVariance / 2);
 		meanHeight = level.minWidth + (level.heightVariance / 2);
 		rooms = new GameObject[level.roomCount];
@@ -102,9 +90,14 @@ public class LevelCreator : MonoBehaviour {
 			}
 		}
 
+//		yield return null;
+	}
+
+	List<GameObject> mainRooms;
+	void SetMainRooms() {
 		Time.fixedDeltaTime = 0.02f;
 		// Round positions of rooms to int and get 'main rooms'?
-		List<GameObject> mainRooms = new List<GameObject>();
+		mainRooms = new List<GameObject>();
 		foreach (GameObject room in rooms) {
 			room.GetComponent<Rigidbody2D> ().isKinematic = true;
 			Vector2 newPos = room.transform.position;
@@ -117,7 +110,9 @@ public class LevelCreator : MonoBehaviour {
 				mainRooms.Add (room);
 			}
 		}
+	}
 
+	void CreateDelauneyAndTree() {
 		mainRoomPoints = new Vector2[mainRooms.Count];
 		for (int i = 0; i < mainRooms.Count; i++) {
 			mainRoomPoints[i] = mainRooms [i].transform.position;
@@ -137,7 +132,9 @@ public class LevelCreator : MonoBehaviour {
 				corridors.Add(m_delaunayTriangulation[i]);
 			}
 		}
+	}
 
+	void CreateCorridors() {
 		corridors = corridors.Distinct ().ToList();
 		// For each corridor, add connections. TODO: This is a dumb
 		for (int i = 0; i < corridors.Count; i++) {
@@ -199,6 +196,14 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	IEnumerator CreateRooms(int numRooms) {
+		ReadVaults ();
+		yield return StartCoroutine(CreateRects (numRooms));
+		SetMainRooms ();
+		CreateDelauneyAndTree ();
+		CreateCorridors ();
 
 		levelBounds = new Rect();
 		bool firstRoomSet = false;
@@ -208,7 +213,7 @@ public class LevelCreator : MonoBehaviour {
 					levelBounds = GetRect (room.transform);
 					firstRoomSet = true;
 				}
-				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
+//				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
 				finalRooms.Add (GameObject.Instantiate (room, gameObject.transform));
 
 				Rect roomRect = GetRect (room.transform);

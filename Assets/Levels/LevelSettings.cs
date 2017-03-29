@@ -4,12 +4,10 @@ using UnityEngine;
 using System.Xml;
 using System.IO;
 
-public class RoomCreationSettings {
-
-}
-
 [CreateAssetMenu(fileName = "levelData", menuName = "LevelSettings", order = 1)]
 public class LevelSettings : ScriptableObject {
+	public int depth = 1;
+		
 	[Header("Initial Room Creation")]
 	public Vector2 mapSize = Vector2.one * 256;
 	public GameObject defaultRoom;
@@ -20,9 +18,6 @@ public class LevelSettings : ScriptableObject {
 	public int heightVariance = 16;
 	[Range(0f, 1f)]
 	public float chanceToAddExtraCorridor = 0.25f;
-
-	[Header("Vaults")]
-	public TextAsset[] vaults;
 
 	[Header("Ground Decoration")]
 	[Range(0f, 1f)]

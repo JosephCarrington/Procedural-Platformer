@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="16" height="16" tilewidth="16" tileheight="16" nextobjectid="2">
+ <properties>
+  <property name="Max Depth" type="int" value="-1"/>
+  <property name="Min Depth" type="int" value="0"/>
+  <property name="Vault Type" value="Entrance"/>
+ </properties>
+ <tileset firstgid="1" source="../Default.tsx"/>
+ <layer name="Tile Layer 1" width="16" height="16">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,5,5,0,0,0,0,0,0,5,5,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,11,0,0,11,0,0,0,0,0,0,
+0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,
+0,0,0,0,0,0,5,0,0,5,0,0,0,0,0,0,
+0,0,0,0,0,0,5,0,0,5,0,0,0,0,0,0,
+0,0,0,0,0,0,5,0,5,5,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,11,0,0,0,0,0,0,11,0,0,0,0,
+0,0,0,0,5,5,5,5,5,5,5,5,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup name="Object Layer 1">
+  <object id="1" name="Start" type="Entrance" x="128" y="160" width="16" height="16"/>
+ </objectgroup>
+</map>
