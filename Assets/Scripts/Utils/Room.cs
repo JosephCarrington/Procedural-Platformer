@@ -1,11 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vaults;
 
 namespace Utils {
 	public class Room : MonoBehaviour {
 		public static Vector2 mapSize = Vector2.one * 256f;
 		public Coordinates pos, size, topLeft, topRight, bottomRight, bottomLeft;
+		public Vault vault{
+			get 
+			{ 
+				return vault;
+			}
+			set
+			{
+				vault = value;
+//				vault.ParseCSV ();
+			}
+		}
 
 		void Awake() {
 			pos = new Coordinates (

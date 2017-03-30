@@ -28,7 +28,7 @@ public class TileMapController : MonoBehaviour {
 
 	public bool IsWallAtCoords(Coordinates coords) {
 		if (coords.x < 0 || coords.x >= map.width || coords.y < 0 || coords.y >= map.height) {
-			print("Coords out of bounds : " + coords.ToString());
+//			print("Coords out of bounds : " + coords.ToString());
 			return false;
 		}
 		int wall = map.GetTile (coords.x, coords.y, 0);

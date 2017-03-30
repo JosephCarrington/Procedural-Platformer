@@ -48,12 +48,35 @@ public class LevelCreator : MonoBehaviour {
 	public GameObject boostPrefab;
 	private List<Vault> floatingVaults =  new List<Vault>();
 	private List<Vault> entranceVaults = new List<Vault> ();
+	private List<Vault> exitVaults = new List<Vault> ();
+
 
 	private void ReadVaults() {
 		foreach (string file in Directory.GetFiles(Application.dataPath + "/Vaults", "*.tmx", SearchOption.AllDirectories))
 		{ 
 			Vault newVault = Utils.Utils.XMLToVault (file);
+			if (newVault.minDepth == -1 || newVault.minDepth >= level.depth) {
+				if (newVault.maxDepth == -1 || newVault.maxDepth <= level.depth) {
+					switch (newVault.type) {
+					case VaultType.Entrance:
+						entranceVaults.Add (newVault);
+						break;
+					case VaultType.Exit:
+						exitVaults.Add (newVault);
+						break;
+					default:
+						floatingVaults.Add (newVault);
+						break;
+					}
+				}
+			}
 		}	
+	}
+
+	private void ShuffleVaults() {
+		floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
+		entranceVaults = Utils.Utils.ShuffleVaults (entranceVaults);
+		exitVaults = Utils.Utils.ShuffleVaults (exitVaults);
 	}
 
 	private IEnumerator CreateRects(int numRooms) {
@@ -200,6 +223,7 @@ public class LevelCreator : MonoBehaviour {
 
 	IEnumerator CreateRooms(int numRooms) {
 		ReadVaults ();
+//		ShuffleVaults ();
 		yield return StartCoroutine(CreateRects (numRooms));
 		SetMainRooms ();
 		CreateDelauneyAndTree ();
@@ -336,6 +360,21 @@ public class LevelCreator : MonoBehaviour {
 		// Ground deco, enemies, spikes, traps
 		foreach(Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
+			// Check to fill with vault
+//			if (Random.value < level.chanceToPlaceVault) {
+//				foreach (Vault v in floatingVaults) {
+//					if (v.size.x <= room.size.x && v.size.y <= room.size.y) {
+//						room.vault = v;
+//						floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
+//						break;
+//					}
+//				}
+//			}
+//
+//			if (room.vault != null) {
+//				print (room.vault.size);
+//			}
+
 			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
 				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
 					
@@ -376,6 +415,7 @@ public class LevelCreator : MonoBehaviour {
 
 				}
 			}
+			// Top Spikes
 			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
 				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
 //					bool spawnedSpike = false;

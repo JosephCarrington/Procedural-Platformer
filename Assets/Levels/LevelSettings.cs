@@ -6,7 +6,11 @@ using System.IO;
 
 [CreateAssetMenu(fileName = "levelData", menuName = "LevelSettings", order = 1)]
 public class LevelSettings : ScriptableObject {
+	[Header("Vault Settings")]
 	public int depth = 1;
+	[Range(0f, 1f)]
+	public float chanceToPlaceVault = 0;
+
 		
 	[Header("Initial Room Creation")]
 	public Vector2 mapSize = Vector2.one * 256;

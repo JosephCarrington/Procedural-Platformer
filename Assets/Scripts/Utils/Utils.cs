@@ -23,7 +23,7 @@ namespace Utils {
 			XmlElement root = vaultData ["map"];
 
 			XmlNodeList properties = root.GetElementsByTagName ("property");
-			int minDepth, maxDepth;
+			int minDepth = -1, maxDepth = -1;
 			string vaultType;
 			foreach (XmlNode p in properties) {
 				switch(p.Attributes ["name"].Value) {
@@ -53,43 +53,51 @@ namespace Utils {
 
 			csv = csv.Replace ("\n", "");
 			Vault va = new Vault();
+			va.minDepth = minDepth;
+			va.maxDepth = maxDepth;
 			va.size = size;
 			va.csv = csv;
 
-			//
-			//
-			//			XmlNodeList objects = root.GetElementsByTagName ("object");
-			//			foreach (XmlNode o in objects) {
-			//				TiledObject obj = new TiledObject();
-			//				switch (o.Attributes ["type"].Value) {
-			//				case "Entrance":
-			//					obj = new EntranceObject ();
-			//					break;
-			//				}
-			//
-			//				obj.position = new Coordinates (
-			//					int.Parse (o.Attributes ["x"].Value) / tileSize.x,
-			//					int.Parse (o.Attributes ["y"].Value) / tileSize.y
-			//				);
-			//
-			//				obj.size = new Coordinates (
-			//					int.Parse (o.Attributes ["width"].Value) / tileSize.x,
-			//					int.Parse (o.Attributes ["height"].Value) / tileSize.y
-			//				);
-			//				va.objects.Add (obj);
-			//			}
-			//
-			//			switch (va.type) {
-			//			case VaultType.Floating:
-			//				floatingVaults.Add (va);
-			//				break;
-			//			case VaultType.Entrance:
-			//				entranceVaults.Add (va);
-			//				break;
-			//			}
+
+
+			XmlNodeList objects = root.GetElementsByTagName ("object");
+			foreach (XmlNode o in objects) {
+				TiledObject obj = new TiledObject();
+				switch (o.Attributes ["type"].Value) {
+				case "Entrance":
+					obj = new EntranceObject ();
+					break;
+				}
+
+				obj.position = new Coordinates (
+					int.Parse (o.Attributes ["x"].Value) / tileSize.x,
+					int.Parse (o.Attributes ["y"].Value) / tileSize.y
+				);
+
+				obj.size = new Coordinates (
+					int.Parse (o.Attributes ["width"].Value) / tileSize.x,
+					int.Parse (o.Attributes ["height"].Value) / tileSize.y
+				);
+				va.objects.Add (obj);
+			}
+
 			reader.Close ();
 
 			return va;
+		}
+
+		public static List<Vault> ShuffleVaults(List<Vault> list)  
+		{  
+			int n = list.Count;  
+			while (n > 1) {  
+				n--;  
+				int k = Random.Range(0, n + 1);  
+				Vault value = list[k];  
+				list[k] = list[n];  
+				list[n] = value;  
+			}  
+
+			return list;
 		}
 
 	}
