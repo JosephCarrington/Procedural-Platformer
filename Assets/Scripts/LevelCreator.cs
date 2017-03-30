@@ -222,7 +222,7 @@ public class LevelCreator : MonoBehaviour {
 	}
 
 	IEnumerator CreateRooms(int numRooms) {
-		ReadVaults ();
+//		ReadVaults ();
 //		ShuffleVaults ();
 		yield return StartCoroutine(CreateRects (numRooms));
 		SetMainRooms ();
@@ -541,7 +541,7 @@ public class LevelCreator : MonoBehaviour {
 	void CreateCorridor(Vector2 start, Vector2 end) {
 		Vector2 midPoint = (start + end) / 2;
 		GameObject corridor = GameObject.Instantiate (level.defaultRoom, gameObject.transform);
-		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
+//		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
 		corridor.GetComponent<Rigidbody2D> ().isKinematic = true;
 		corridor.name = "Corridor";
 		corridor.transform.position = midPoint;
