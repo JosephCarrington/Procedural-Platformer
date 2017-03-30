@@ -7,7 +7,8 @@ namespace Vaults {
 	public enum VaultType {
 		Entrance,
 		Exit,
-		Floating
+		Floating,
+		Configured
 	}
 		
 	public enum TileType {
@@ -17,33 +18,43 @@ namespace Vaults {
 		Spike
 	}
 
-	public class Vault : MonoBehaviour {
-		public Coordinates size {
-			get {
-				return size;
-			}
-			set {
-				size = value;
-//				tiles = new TileType[size.x, size.y];
-			}
-		}
+	public class Vault {
+		public string name;
+		public Coordinates size;
 		public string csv;
 		public VaultType type = VaultType.Floating;
 		public List<TiledObject> objects = new List<TiledObject>();
 		public int minDepth, maxDepth;
 
-//		public TileType[,] tiles { get; set;}
+		public TileType[,] tiles { get; set;}
 
 		public void ParseCSV() {
-//			int i = 0;
-//			char[] chars = csv.ToCharArray ();
-//			for (int x = 0; x < size.x; x++) {
-//				for (int y = 0; y < size.y; y++) {
-//					char c = chars [i];
-//					print (c);
-//					i++;
-//				}
-//			}
+			tiles = new TileType[size.x, size.y];
+			int i = 0;
+			string[] tileIds = csv.Split (',');
+			for (int x = 0; x < size.x; x++) {
+				for (int y = 0; y < size.y; y++) {
+					string c = tileIds [i];
+					switch (int.Parse(c)) {
+					case 5:
+					case 6:
+					case 7:
+					case 8:
+						tiles [x, y] = TileType.Wall;
+						break;
+					case 9:
+						tiles [x, y] = TileType.Lava;
+						break;
+					case 11: 
+						tiles [x, y] = TileType.Spike;
+						break;
+					default:
+						tiles [x, y] = TileType.Empty;
+						break;
+					}
+					i++;
+				}
+			}
 		}
 	}
 }

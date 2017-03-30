@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using Vaults;
 
 public class TileMapController : MonoBehaviour {
 
@@ -66,6 +67,24 @@ public class TileMapController : MonoBehaviour {
 		}
 	}
 
+	public void CreateVaultInRoom(Vault v, Room r) {
+		for (int x = 0; x < v.size.x; x++) {
+			for (int y = 0; y < v.size.y; y++) {
+				switch(v.tiles[x, y]) {
+				case TileType.Wall:
+					Coordinates newCoords = new Coordinates (x, y);
+					newCoords.x += r.pos.x;
+					newCoords.y += r.pos.y;
+					newCoords.x -= r.size.x / 4;
+					newCoords.y -= r.size.y / 4;
+					CreateDebugTileAt (newCoords);
+					break;
+
+				}
+			}
+		}
+	}
+
 	public int GetWallColumnHeight(Coordinates a) {
 		int wallHeight = 0;
 		bool wallAtPos = true;
@@ -108,6 +127,9 @@ public class TileMapController : MonoBehaviour {
 
 	public void CreateWallTileAt(Coordinates c) {
 		map.SetTile (c.x, c.y, 0, Random.Range (4, 7));
+	}
+	public void CreateDebugTileAt(Coordinates c) {
+		map.SetTile (c.x, c.y, 0, 15);
 	}
 
 	public int spikeLayer = 3;

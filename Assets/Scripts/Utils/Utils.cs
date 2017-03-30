@@ -53,19 +53,22 @@ namespace Utils {
 
 			csv = csv.Replace ("\n", "");
 			Vault va = new Vault();
+			va.name = file;
 			va.minDepth = minDepth;
 			va.maxDepth = maxDepth;
 			va.size = size;
 			va.csv = csv;
 
 
-
+			va.objects = new List<TiledObject> ();
+			int exitCount = 0;
 			XmlNodeList objects = root.GetElementsByTagName ("object");
 			foreach (XmlNode o in objects) {
 				TiledObject obj = new TiledObject();
 				switch (o.Attributes ["type"].Value) {
-				case "Entrance":
-					obj = new EntranceObject ();
+				case "Exit":
+					obj = new ExitObject ();
+					exitCount++;
 					break;
 				}
 
@@ -81,6 +84,9 @@ namespace Utils {
 				va.objects.Add (obj);
 			}
 
+			if (exitCount > 0) {
+				va.type = VaultType.Configured;
+			}
 			reader.Close ();
 
 			return va;
