@@ -89,13 +89,15 @@ public class TileMapController : MonoBehaviour {
 				case 6:
 				case 7:
 				case 8:
-					CreateDebugTileAt(newCoords);
+					CreateWallTileAt(newCoords);
 					break;
 				case 9:
 					break;
 				case 11: 
 					layer = spikeLayer;
-					CreateSpikeAt (newCoords);
+					if(!IsWallAtCoords(newCoords)) {
+						CreateSpikeAt (newCoords);
+					}
 					break;
 				default:
 					break;
