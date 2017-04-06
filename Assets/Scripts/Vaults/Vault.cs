@@ -32,10 +32,11 @@ namespace Vaults {
 			tiles = new TileType[size.x, size.y];
 			int i = 0;
 			string[] tileIds = csv.Split (',');
-			for (int x = 0; x < size.x; x++) {
-				for (int y = 0; y < size.y; y++) {
+
+			for (int y = 0; y < size.y; y++) {
+				for (int x = 0; x < size.x; x++) {
 					string c = tileIds [i];
-					switch (int.Parse(c)) {
+					switch (uint.Parse(c)) {
 					case 5:
 					case 6:
 					case 7:
@@ -55,6 +56,16 @@ namespace Vaults {
 					i++;
 				}
 			}
+		}
+
+		public void ConvertVaultToTK2D() {
+			TileType[,] newTiles =  new TileType[size.y, size.x];
+			newTiles = Utils.Utils.TransposeMatrix (tiles);
+			int newX = tiles.GetLength (0);
+			int newY = tiles.GetLength (1);
+			size.x = newX;
+			size.y = newY;
+			tiles = newTiles;
 		}
 	}
 }

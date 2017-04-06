@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using System.Text;
 
 using Vaults;
 
@@ -50,14 +51,15 @@ namespace Utils {
 			Coordinates size = new Coordinates (width, height);
 
 			string csv = root.GetElementsByTagName("data")[0].InnerText;
+			StringBuilder b = new StringBuilder (csv);
+			b.Replace ("\r", "").Replace ("\n", "");
 
-			csv = csv.Replace ("\n", "");
 			Vault va = new Vault();
 			va.name = file;
 			va.minDepth = minDepth;
 			va.maxDepth = maxDepth;
 			va.size = size;
-			va.csv = csv;
+			va.csv = b.ToString();
 
 
 			va.objects = new List<TiledObject> ();
@@ -92,6 +94,8 @@ namespace Utils {
 			return va;
 		}
 
+
+
 		public static List<Vault> ShuffleVaults(List<Vault> list)  
 		{  
 			int n = list.Count;  
@@ -106,5 +110,26 @@ namespace Utils {
 			return list;
 		}
 
+		public static TileType[,] TransposeMatrix(TileType[,] matrix)
+		{
+			int w = matrix.GetLength(0);
+			int h = matrix.GetLength(1);
+
+			TileType[,] result = new TileType[h, w];
+
+			for (int i = 0; i < w; i++)
+			{
+				for (int j = 0; j < h; j++)
+				{
+					result[j, i] = matrix[i, j];
+				}
+			}
+
+			return result;
+
+		}
+
 	}
+
+
 }

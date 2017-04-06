@@ -68,16 +68,21 @@ public class TileMapController : MonoBehaviour {
 	}
 
 	public void CreateVaultInRoom(Vault v, Room r) {
-		for (int x = 0; x < v.size.x; x++) {
-			for (int y = 0; y < v.size.y; y++) {
+		TileType[,] tiles = v.tiles;
+		for (int x = 0; x < tiles.GetLength(0); x++) {
+			for (int y = 0; y < tiles.GetLength(1); y++) {
+				Coordinates newCoords = new Coordinates (x, tiles.GetLength(0) - 1 - y);
+				newCoords.x += r.pos.x;
+				newCoords.y += r.pos.y;
+				newCoords.x -= r.size.x / 4;
+//				newCoords.y -= r.size.y;
+				newCoords.y -= r.size.y / 4;
 				switch(v.tiles[x, y]) {
 				case TileType.Wall:
-					Coordinates newCoords = new Coordinates (x, y);
-					newCoords.x += r.pos.x;
-					newCoords.y += r.pos.y;
-					newCoords.x -= r.size.x / 4;
-					newCoords.y -= r.size.y / 4;
 					CreateDebugTileAt (newCoords);
+					break;
+				case TileType.Spike:
+					CreateSpikeAt (newCoords);
 					break;
 
 				}

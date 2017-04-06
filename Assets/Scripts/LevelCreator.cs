@@ -131,10 +131,11 @@ public class LevelCreator : MonoBehaviour {
 			Room room = child.gameObject.GetComponent<Room>();
 			//			 Check to fill with vault
 			bool madeVault = false;
-			if (Random.value < level.chanceToPlaceVault) {
+			if (room != entranceRoom && Random.value < level.chanceToPlaceVault) {
 				foreach (Vault v in floatingVaults) {
 					if (v.size.x <= room.size.x && v.size.y <= room.size.y) {
 						v.ParseCSV ();
+//						v.ConvertVaultToTK2D ();
 						room.vault = v;
 						floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
 						map.CreateVaultInRoom (room.vault, room);
