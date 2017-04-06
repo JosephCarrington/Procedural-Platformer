@@ -68,16 +68,15 @@ public class TileMapController : MonoBehaviour {
 	}
 
 	public void CreateVaultInRoom(Vault v, Room r) {
-		TileType[,] tiles = v.tiles;
 		uint[,] tileInts = v.tileInts;
 
 
 
-		for (int x = 0; x < tiles.GetLength(0); x++) {
-			for (int y = 0; y < tiles.GetLength(1); y++) {
+		for (int x = 0; x < tileInts.GetLength(0); x++) {
+			for (int y = 0; y < tileInts.GetLength(1); y++) {
 				uint rawTile = tileInts [x, y];
 				int tile = (int)(rawTile & ~(0xE0000000)); // ignore flipping and rotating
-				Coordinates newCoords = new Coordinates (x, tiles.GetLength(0) - 1 - y);
+				Coordinates newCoords = new Coordinates (x, tileInts.GetLength(0) - 1 - y);
 				newCoords.x += r.pos.x;
 				newCoords.y += r.pos.y;
 				newCoords.x -= r.size.x / 4;

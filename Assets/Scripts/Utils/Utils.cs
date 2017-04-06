@@ -110,24 +110,24 @@ namespace Utils {
 			return list;
 		}
 
-		public static TileType[,] TransposeMatrix(TileType[,] matrix)
-		{
-			int w = matrix.GetLength(0);
-			int h = matrix.GetLength(1);
-
-			TileType[,] result = new TileType[h, w];
-
-			for (int i = 0; i < w; i++)
-			{
-				for (int j = 0; j < h; j++)
-				{
-					result[j, i] = matrix[i, j];
-				}
-			}
-
-			return result;
-
-		}
+//		public static TileType[,] TransposeMatrix(TileType[,] matrix)
+//		{
+//			int w = matrix.GetLength(0);
+//			int h = matrix.GetLength(1);
+//
+//			TileType[,] result = new TileType[h, w];
+//
+//			for (int i = 0; i < w; i++)
+//			{
+//				for (int j = 0; j < h; j++)
+//				{
+//					result[j, i] = matrix[i, j];
+//				}
+//			}
+//
+//			return result;
+//
+//		}
 
 	}
 

@@ -135,7 +135,6 @@ public class LevelCreator : MonoBehaviour {
 				foreach (Vault v in floatingVaults) {
 					if (v.size.x <= room.size.x && v.size.y <= room.size.y) {
 						v.ParseCSV ();
-//						v.ConvertVaultToTK2D ();
 						room.vault = v;
 						floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
 						map.CreateVaultInRoom (room.vault, room);
