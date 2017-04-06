@@ -69,23 +69,48 @@ public class TileMapController : MonoBehaviour {
 
 	public void CreateVaultInRoom(Vault v, Room r) {
 		TileType[,] tiles = v.tiles;
+		uint[,] tileInts = v.tileInts;
+
+
+
 		for (int x = 0; x < tiles.GetLength(0); x++) {
 			for (int y = 0; y < tiles.GetLength(1); y++) {
+				uint rawTile = tileInts [x, y];
+				int tile = (int)(rawTile & ~(0xE0000000)); // ignore flipping and rotating
 				Coordinates newCoords = new Coordinates (x, tiles.GetLength(0) - 1 - y);
 				newCoords.x += r.pos.x;
 				newCoords.y += r.pos.y;
 				newCoords.x -= r.size.x / 4;
 //				newCoords.y -= r.size.y;
 				newCoords.y -= r.size.y / 4;
-				switch(v.tiles[x, y]) {
-				case TileType.Wall:
-					CreateDebugTileAt (newCoords);
+
+				int layer = 0;
+				switch (tile) {
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+					CreateDebugTileAt(newCoords);
 					break;
-				case TileType.Spike:
+				case 9:
+					break;
+				case 11: 
+					layer = spikeLayer;
 					CreateSpikeAt (newCoords);
 					break;
-
+				default:
+					break;
 				}
+
+				// Set tile flags
+				bool flipHorizontal = (rawTile & 0x80000000) != 0;
+				bool flipVertical = (rawTile & 0x40000000) != 0;
+				bool flipDiagonal = (rawTile & 0x20000000) != 0;
+				tk2dTileFlags tileFlags = 0;
+				if (flipDiagonal) tileFlags |= (tk2dTileFlags.Rot90 | tk2dTileFlags.FlipX);
+				if (flipHorizontal) tileFlags ^= tk2dTileFlags.FlipX;
+				if (flipVertical) tileFlags ^= tk2dTileFlags.FlipY;
+				map.SetTileFlags(newCoords.x, newCoords.y, layer, tileFlags);
 			}
 		}
 	}

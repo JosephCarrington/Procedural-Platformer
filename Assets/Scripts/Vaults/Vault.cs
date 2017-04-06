@@ -17,8 +17,8 @@ namespace Vaults {
 		Lava,
 		Spike
 	}
-
-	public class Vault {
+		
+	public class Vault : MonoBehaviour{
 		public string name;
 		public Coordinates size;
 		public string csv;
@@ -27,16 +27,33 @@ namespace Vaults {
 		public int minDepth, maxDepth;
 
 		public TileType[,] tiles { get; set;}
+		public uint[,] tileInts;
 
 		public void ParseCSV() {
+
+			const uint FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+			const uint FLIPPED_VERTICALLY_FLAG   = 0x40000000;
+			const uint FLIPPED_DIAGONALLY_FLAG   = 0x20000000;
+
 			tiles = new TileType[size.x, size.y];
+			tileInts = new uint[size.x, size.y];
 			int i = 0;
 			string[] tileIds = csv.Split (',');
+			List<uint> values = new List<uint>();
+			foreach (string id in tileIds) {
+				values.Add (uint.Parse (id, System.Globalization.NumberFormatInfo.InvariantInfo));
+			}
+
+			uint[] tileData = values.ToArray ();
 
 			for (int y = 0; y < size.y; y++) {
 				for (int x = 0; x < size.x; x++) {
-					string c = tileIds [i];
-					switch (uint.Parse(c)) {
+					uint c = tileData [i];
+					int tile = (int)(c & ~(0xE0000000)); // ignore flipping and rotating
+					tileInts[x, y] = c;
+
+
+					switch (tile) {
 					case 5:
 					case 6:
 					case 7:
