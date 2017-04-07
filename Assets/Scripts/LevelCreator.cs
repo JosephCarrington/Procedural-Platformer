@@ -295,25 +295,28 @@ public class LevelCreator : MonoBehaviour {
 
 
 	private void ReadVaults() {
-		foreach (string file in Directory.GetFiles(Application.dataPath + "/Vaults", "*.tmx", SearchOption.AllDirectories))
-		{ 
-			Vault newVault = Utils.Utils.XMLToVault (file);
-			if (newVault.minDepth == -1 || newVault.minDepth >= level.depth) {
-				if (newVault.maxDepth == -1 || newVault.maxDepth <= level.depth) {
-					switch (newVault.type) {
-					case VaultType.Entrance:
-						entranceVaults.Add (newVault);
-						break;
-					case VaultType.Exit:
-						exitVaults.Add (newVault);
-						break;
-					case VaultType.Floating:
-						floatingVaults.Add (newVault);
-						break;
-					}
-				}
-			}
-		}	
+		string[] files;
+		Object[] raws = Resources.LoadAll ("Vaults");
+		print (raws.Length);
+//		foreach (string file in files)
+//		{ 
+//			Vault newVault = Utils.Utils.XMLToVault (file);
+//			if (newVault.minDepth == -1 || newVault.minDepth >= level.depth) {
+//				if (newVault.maxDepth == -1 || newVault.maxDepth <= level.depth) {
+//					switch (newVault.type) {
+//					case VaultType.Entrance:
+//						entranceVaults.Add (newVault);
+//						break;
+//					case VaultType.Exit:
+//						exitVaults.Add (newVault);
+//						break;
+//					case VaultType.Floating:
+//						floatingVaults.Add (newVault);
+//						break;
+//					}
+//				}
+//			}
+//		}	
 	}
 
 	private void ShuffleVaults() {
