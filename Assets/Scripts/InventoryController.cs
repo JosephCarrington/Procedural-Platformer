@@ -42,9 +42,10 @@ public class InventoryController : MonoBehaviour {
 				Vector3 newPos = newPanel.GetComponent<RectTransform> ().position;
 				newPos.x = i * inventoryItemPanelPrefab.GetComponent<RectTransform> ().rect.width;
 				newPanel.GetComponent<RectTransform> ().position = newPos;
-				newPanel.GetComponent<InventoryItemPanelController> ().SetKey ((i + 1).ToString ());
-				newPanel.GetComponent<InventoryItemPanelController> ().SetIcon (slot[i].GetComponent<SpriteRenderer>().sprite);
-				newPanel.GetComponent<InventoryItemPanelController> ().SetCount (slot.Count);
+				InventoryItemPanelController panelController = newPanel.GetComponent<InventoryItemPanelController> ();
+				panelController.SetKey ((i + 1).ToString ());
+				panelController.SetIcon (slot[0].GetComponent<SpriteRenderer>().sprite);
+				panelController.SetCount (slot.Count);
 
 			}
 		}

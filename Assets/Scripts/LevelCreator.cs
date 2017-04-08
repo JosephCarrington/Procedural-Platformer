@@ -298,7 +298,6 @@ public class LevelCreator : MonoBehaviour {
 
 	private void ReadVaults() {
 		Object[] raws = Resources.LoadAll ("Vaults", typeof(TextAsset));
-		print (raws.Length);
 		TextAsset[] rawXMLs = new TextAsset[raws.Length];
 		int i = 0;
 		foreach (Object raw in raws) {
