@@ -16,11 +16,8 @@ namespace Utils {
 		}
 		public static Vector2 mapSize = Vector2.one * 256f;
 
-		public static Vault XMLToVault(string file) {
-			StreamReader reader = new StreamReader (file);
-			string xml = reader.ReadToEnd ();
-			XmlDocument vaultData = new XmlDocument ();
-			vaultData.LoadXml (xml);
+		public static Vault XMLToVault(XmlDocument vaultData) {
+			
 			XmlElement root = vaultData ["map"];
 
 			XmlNodeList properties = root.GetElementsByTagName ("property");
@@ -55,7 +52,6 @@ namespace Utils {
 			b.Replace ("\r", "").Replace ("\n", "");
 
 			Vault va = new Vault();
-			va.name = file;
 			va.minDepth = minDepth;
 			va.maxDepth = maxDepth;
 			va.size = size;
@@ -89,8 +85,6 @@ namespace Utils {
 			if (exitCount > 0) {
 				va.type = VaultType.Configured;
 			}
-			reader.Close ();
-
 			return va;
 		}
 

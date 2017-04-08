@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 using Utils;
 using Vaults;
@@ -295,28 +297,33 @@ public class LevelCreator : MonoBehaviour {
 
 
 	private void ReadVaults() {
-		string[] files;
-		Object[] raws = Resources.LoadAll ("Vaults");
+		Object[] raws = Resources.LoadAll ("Vaults", typeof(TextAsset));
 		print (raws.Length);
-//		foreach (string file in files)
-//		{ 
-//			Vault newVault = Utils.Utils.XMLToVault (file);
-//			if (newVault.minDepth == -1 || newVault.minDepth >= level.depth) {
-//				if (newVault.maxDepth == -1 || newVault.maxDepth <= level.depth) {
-//					switch (newVault.type) {
-//					case VaultType.Entrance:
-//						entranceVaults.Add (newVault);
-//						break;
-//					case VaultType.Exit:
-//						exitVaults.Add (newVault);
-//						break;
-//					case VaultType.Floating:
-//						floatingVaults.Add (newVault);
-//						break;
-//					}
-//				}
-//			}
-//		}	
+		TextAsset[] rawXMLs = new TextAsset[raws.Length];
+		int i = 0;
+		foreach (Object raw in raws) {
+			rawXMLs [i] = raw as TextAsset;
+			i++;
+		}
+
+		foreach (TextAsset rawXML in rawXMLs) {
+			XmlDocument vaultXML = new XmlDocument ();
+			vaultXML.LoadXml (rawXML.text);
+			Vault newVault = Utils.Utils.XMLToVault (vaultXML);
+			if (newVault.minDepth == -1 || newVault.minDepth >= level.depth) {
+				switch (newVault.type) {
+				case VaultType.Entrance:
+					entranceVaults.Add (newVault);
+					break;
+				case VaultType.Exit:
+					exitVaults.Add (newVault);
+					break;
+				case VaultType.Floating:
+					floatingVaults.Add (newVault);
+					break;
+				}
+			}
+		}
 	}
 
 	private void ShuffleVaults() {
