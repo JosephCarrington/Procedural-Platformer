@@ -109,6 +109,7 @@ public class SlimeController : MonoBehaviour {
 
 	void Die() {
 		animator.SetBool ("Dead", true);
+		Debug.Break ();
 		Destroy(gameObject.GetComponent<CircleCollider2D>());
 		dead = true;
 

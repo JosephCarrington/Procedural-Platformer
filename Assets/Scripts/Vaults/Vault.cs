@@ -11,7 +11,7 @@ namespace Vaults {
 		Configured
 	}
 		
-	public class Vault : MonoBehaviour{
+	public class Vault {
 		public string name;
 		public Coordinates size;
 		public string csv;
