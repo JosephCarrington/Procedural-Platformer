@@ -1,0 +1,28 @@
+{
+  "name": "procedural-platformer",
+  "version": "0.0.1",
+  "description": "you can try it here: https://josephcarrington.github.io/Procedural-Platformer/ if it looks like crap or makes you dizzy, try the fullscreen button. I'm still working on the camera settings for different screen resolutions",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosephCarrington/Procedural-Platformer.git"
+  },
+  "author": "Joseph Carrington",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JosephCarrington/Procedural-Platformer/issues"
+  },
+  "homepage": "https://github.com/JosephCarrington/Procedural-Platformer#readme",
+  "devDependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-watch": "^4.3.11"
+  }
+}
