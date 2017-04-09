@@ -9,10 +9,16 @@ public class InventoryItemPanelController : MonoBehaviour {
 	Text itemKey;
 	Image itemIcon;
 	Text itemCount;
+
+	Button button;
+	bool empty = true;
 	void Awake () {
-		itemKey = transform.Find ("ItemKeyPanel/ItemKey").gameObject.GetComponent<Text> ();
-		itemIcon = transform.Find ("ItemIconPanel/Icon").gameObject.GetComponent<Image> ();
-		itemCount = transform.Find ("ItemIconPanel/Count").gameObject.GetComponent<Text> ();
+		itemKey = transform.Find ("Key").gameObject.GetComponent<Text> ();
+		itemIcon = transform.Find ("Icon").gameObject.GetComponent<Image> ();
+		itemCount = transform.Find ("Count").gameObject.GetComponent<Text> ();
+
+		button = gameObject.GetComponent<Button> ();
+		button.onClick.AddListener (UseItem);
 	}
 
 	public void SetKey(string newKey) {
@@ -26,8 +32,12 @@ public class InventoryItemPanelController : MonoBehaviour {
 	public void SetCount(int newCount) {
 		itemCount.text = newCount.ToString ();
 	}
-	// Update is called once per frame
-	void Update () {
-		
+
+	public bool IsEmpty() {
+		return empty;
+	}
+
+	public void UseItem() {
+		print ("used");
 	}
 }
