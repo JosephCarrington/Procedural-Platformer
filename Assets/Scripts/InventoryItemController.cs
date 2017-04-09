@@ -28,12 +28,7 @@ public class InventoryItemController : MonoBehaviour {
 	}
 
 	void PickUp(GameObject newOwner) {
-		if (newOwner.GetComponent<InventoryController> ().HasRoomInInventory ()) {
-			owner = newOwner;
-			newOwner.GetComponent<InventoryController> ().AddToInventory (gameObject);
-			Destroy (gameObject.GetComponent<Collider2D> ());
-			gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-		}
+
 	}
 
 	public void UseItem() {
