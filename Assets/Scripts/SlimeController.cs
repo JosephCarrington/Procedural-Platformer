@@ -135,7 +135,6 @@ public class SlimeController : MonoBehaviour {
 
 			}
 		} else {
-			print (col.gameObject);
 		}
 	}
 

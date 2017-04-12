@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
-public class SlimeBallController : MonoBehaviour {
+public class SlimeBallController : InventoryItem {
 	public int slimeRadius = 1;
-	void Use() {
-		GameObject owner = gameObject.GetComponent<InventoryItemController> ().Owner;
+	public override void UseOnSelf() {
+		GameObject owner = gameObject.GetComponent<Collectible> ().Owner;
 		Vector2 playerPos = owner.transform.position;
 		Coordinates coords = new Coordinates (Mathf.RoundToInt(playerPos.x), Mathf.RoundToInt(playerPos.y));
 		Vector2 mapSize = Utils.Utils.mapSize;
@@ -24,7 +24,7 @@ public class SlimeBallController : MonoBehaviour {
 		mapController.Build ();
 
 
-		Destroy (gameObject);
+//		Destroy (gameObject);
 
 	}
 }

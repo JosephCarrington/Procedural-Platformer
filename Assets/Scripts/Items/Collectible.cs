@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//[RequireComponent(typeof(SpriteRenderer))]
-//[RequireComponent(typeof(Collider2D))]
-public class InventoryItemController : MonoBehaviour {
+public class Collectible : MonoBehaviour {
 
 	// Use this for initialization
+	public Sprite itemIcon;
 
 	float startTime;
 	void Start () {
 		startTime = Time.time;
+		// Ignore our non-trigger collider, to avoid weird physics
 		Physics2D.IgnoreCollision (gameObject.transform.GetComponent<Collider2D> (), GameObject.Find ("Player").GetComponent<Collider2D> ());
 	}
 	public float dontCollectTime = 0.25f;
@@ -27,24 +27,17 @@ public class InventoryItemController : MonoBehaviour {
 		}
 	}
 
-	void PickUp(GameObject newOwner) {
-
-	}
-
-	public void UseItem() {
-		gameObject.SendMessage ("Use");
-		if (destroyOnUse) {
-			Destroy (gameObject);
-		}
-	}
-
 	void OnTriggerEnter2D(Collider2D col) {
 		if (Time.time < startTime + dontCollectTime) {
 			return;
 		}
 
 		if (col.gameObject.tag == "Player") {
-			PickUp (col.gameObject);
+			InventoryController inventory = col.gameObject.GetComponent<InventoryController> ();
+			if (inventory.HasRoom ()) {
+				Owner = col.gameObject;
+				inventory.AddItem (gameObject);
+			}
 		}
 	}
 }

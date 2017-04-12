@@ -55,7 +55,6 @@ public class PlayerController : MonoBehaviour {
 	float h;
 	bool jump = false;
 	bool jumping = false;
-	bool doubleJumping = false;
 	void Update() {
 		if (Input.GetKeyDown (KeyCode.R)) {
 			Die ();
@@ -65,14 +64,6 @@ public class PlayerController : MonoBehaviour {
 		if(Input.GetButtonUp("Jump")) {
 			jumping = false;
 		}
-
-		if (Input.GetButtonDown ("Double Jump")) {
-			doubleJumping = true;
-		}
-		if (Input.GetButtonUp ("Double Jump")) {
-			doubleJumping = false;
-		}
-			
 	}
 
 	float currentVel;
