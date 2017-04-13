@@ -200,8 +200,8 @@ public class LevelCreator : MonoBehaviour {
 					bool spawnedSpike = false;
 					if (!spawnedEnemy && room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
 						spawnedSpike = true;
-						//						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y));
-						GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y), TileMapController.TileDirection.Up);
+//						GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 					}
 
 					//					bool spawnedTrap = false;
@@ -233,10 +233,12 @@ public class LevelCreator : MonoBehaviour {
 					//					bool spawnedSpike = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
 						//						spawnedSpike = true;
-						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.topLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
-						Vector2 newScale = newSpike.transform.localScale;
-						newScale.y = -1;
-						newSpike.transform.localScale = newScale;
+//						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.topLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+//						Vector2 newScale = newSpike.transform.localScale;
+//						newScale.y = -1;
+//						newSpike.transform.localScale = newScale;
+						map.CreateSpikeAt (new Coordinates (x, room.topLeft.y), TileMapController.TileDirection.Down);
+
 					}
 				}
 			}

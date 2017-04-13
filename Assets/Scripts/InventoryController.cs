@@ -14,11 +14,11 @@ public class InventoryController : MonoBehaviour {
 	}
 
 	public void AddItem(GameObject item) {
-		// First find if we already have this item
-		int slot = inventory.GetItemSlot(item);
-		if (slot != -1) {
-			inventory.AddItemAtSlot (item, slot);
-		}
+//		// First find if we already have this item
+//		int slot = inventory.GetItemSlot(item);
+//		if (slot != -1) {
+//			inventory.AddItemAtSlot (item, slot);
+//		}
 
 	}
 

@@ -64,6 +64,43 @@ public class PlayerController : MonoBehaviour {
 		if(Input.GetButtonUp("Jump")) {
 			jumping = false;
 		}
+
+		// Check for spikes
+		TileMapController.TileInfo tile = map.GetTileAtPosition(transform.position);
+		if (tile.type == TileMapController.TileType.Spike) {
+			print (tile.direction);
+
+			Vector2 v = gameObject.GetComponent<Rigidbody2D> ().velocity;
+			float maxV = 1f;
+			float knockBackStrength = 30f;
+			switch (tile.direction) {
+			case TileMapController.TileDirection.Up:
+				if (v.y < -maxV) {
+					TakeDamage (1);
+					KnockBack(new Vector2(v.x * 0.1f, knockBackStrength));
+				}
+				break;
+			case TileMapController.TileDirection.Down:
+				if (v.y > maxV) {
+					TakeDamage (1);
+					KnockBack(new Vector2(v.x * 0.1f, -knockBackStrength));
+				}
+				break;
+			case TileMapController.TileDirection.Right:
+				if (v.x < -maxV) {
+					TakeDamage (1);
+					KnockBack(new Vector2(knockBackStrength, v.y * 0.1f));
+				}
+				break;
+			case TileMapController.TileDirection.Left:
+				if (v.x > maxV) {
+					TakeDamage (1);
+					KnockBack(new Vector2(-knockBackStrength, v.y * 0.1f));
+				}
+				break;
+			}
+		}
+
 	}
 
 	float currentVel;

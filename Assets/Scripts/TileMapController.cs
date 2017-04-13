@@ -94,7 +94,6 @@ public class TileMapController : MonoBehaviour {
 				case 9:
 					break;
 				case 11: 
-					layer = spikeLayer;
 					if(!IsWallAtCoords(newCoords)) {
 						CreateSpikeAt (newCoords);
 					}
@@ -111,9 +110,80 @@ public class TileMapController : MonoBehaviour {
 				if (flipDiagonal) tileFlags |= (tk2dTileFlags.Rot90 | tk2dTileFlags.FlipX);
 				if (flipHorizontal) tileFlags ^= tk2dTileFlags.FlipX;
 				if (flipVertical) tileFlags ^= tk2dTileFlags.FlipY;
-				map.SetTileFlags(newCoords.x, newCoords.y, layer, tileFlags);
+				map.SetTileFlags(newCoords.x, newCoords.y, 0, tileFlags);
 			}
 		}
+	}
+
+	public TileDirection TileFlagsToTileDirection(tk2dTileFlags flags) {
+		print (flags);
+		bool flipVertical = (flags & tk2dTileFlags.FlipY) != 0;
+		bool flipHorizontal = (flags & tk2dTileFlags.FlipX) != 0;
+		bool flipDiagonal = (flags & tk2dTileFlags.Rot90) != 0;
+		if (flipDiagonal) {
+			if (flipHorizontal) {
+				return TileDirection.Left;
+			}
+			return TileDirection.Right;
+		} else {
+			if (flipVertical) {
+				return TileDirection.Down;
+			}
+		}
+		return TileDirection.Up;
+	}
+	public enum TileType{
+		Empty,
+		Wall,
+		Lava,
+		Spike
+	}
+
+	public enum TileDirection{
+		Up,
+		Down,
+		Left,
+		Right
+	}
+	public class TileInfo {
+		public TileType type;
+		public TileDirection direction;
+	}
+
+	public TileInfo GetTileAtPosition(Vector2 pos) {
+		int x, y, tileId = -1;
+		TileDirection dir = TileDirection.Up;
+		if (map.GetTileAtPosition (pos, out x, out y)) {		
+			// Default to spike
+			tileId = map.GetTile(x, y, 0);
+			if (tileId != -1) {
+				// Something is here on the spike layer
+
+			}
+		}
+		tk2dTileFlags flags = map.GetTileFlags(x, y, 0);
+		dir = (TileFlagsToTileDirection (flags));
+
+		TileInfo tile = new TileInfo ();
+		switch (tileId) {
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			tile.type = TileType.Wall;
+			break;
+		case 8:
+			tile.type = TileType.Lava;
+			break;
+		case 10:
+			tile.type = TileType.Spike;
+			break;
+		default:
+			tile.type = TileType.Empty;
+			break;
+		}
+		tile.direction = dir;
+		return tile;
 	}
 
 	public int GetWallColumnHeight(Coordinates a) {
@@ -165,7 +235,18 @@ public class TileMapController : MonoBehaviour {
 
 	public int spikeLayer = 3;
 	public void CreateSpikeAt(Coordinates c) {
-		map.SetTile (c.x, c.y, spikeLayer, 10);
+		map.SetTile (c.x, c.y, 0, 10);
+	}
+	public void CreateSpikeAt(Coordinates c, TileDirection d) {
+		tk2dTileFlags tileFlags = 0;
+		map.SetTile (c.x, c.y, 0, 10);
+		switch (d) {
+		case TileDirection.Down:
+			tileFlags ^= tk2dTileFlags.FlipY;
+			break;
+		}
+		map.SetTileFlags(c.x, c.y, 0, tileFlags);
+
 	}
 
 	public int slimeLayer = 4;
