@@ -117,7 +117,7 @@ public class SlimeController : MonoBehaviour {
 
 		// Slimeball
 		GameObject newSlimeBall = GameObject.Instantiate(slimeBall, new Vector3(transform.position.x, transform.position.y, -2), Quaternion.identity);
-		newSlimeBall.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-8f, 8f), Random.Range(4f, 8f)), ForceMode2D.Impulse);
+		newSlimeBall.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-8f, 8f), Random.Range(2f, 4f)), ForceMode2D.Impulse);
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
