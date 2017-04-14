@@ -99,6 +99,9 @@ public class SlimeController : MonoBehaviour {
 		}
 		return false;
 	}
+	public void TakeDamage(int damage = 1) {
+		GetHurt (damage);
+	}
 	public void GetHurt(int damage = 1) {
 		hp -= damage;
 		transform.Find ("Particles").GetComponent<ParticleSystem> ().Play ();

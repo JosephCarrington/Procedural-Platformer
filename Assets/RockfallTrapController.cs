@@ -53,12 +53,18 @@ public class RockfallTrapController : MonoBehaviour {
 		Vector3 newPos = holder.transform.localPosition;
 		newPos.y += height;
 		holder.transform.localPosition = newPos;
+		newPos = rock.transform.localPosition;
+		newPos.y += height;
 		rock.transform.localPosition = newPos;
 
 	}
 
+	bool triggered = false;
 	void TriggerTrap() {
-		rock.gameObject.GetComponent<Rigidbody2D> ().isKinematic = false;
-		rock.gameObject.GetComponent<Rigidbody2D> ().AddTorque (Random.Range(-10, 10), ForceMode2D.Impulse);
+		if (!triggered) {
+			rock.gameObject.GetComponent<Rigidbody2D> ().isKinematic = false;
+			rock.gameObject.GetComponent<Rigidbody2D> ().AddTorque (Random.Range (-10, 10), ForceMode2D.Impulse);
+		}
+		triggered = true;
 	}
 }

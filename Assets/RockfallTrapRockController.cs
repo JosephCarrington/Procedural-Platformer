@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class RockfallTrapRockController : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public void OnCollisionEnter2D(Collision2D col) {
+		int damageVelocity = 2;
+		print (col.relativeVelocity.y);
+		if (Mathf.Abs(col.relativeVelocity.y) > damageVelocity) {
+			if (col.gameObject.tag == "Player" || col.gameObject.tag == "Enemy") {
+				if (col.contacts [0].normal.y > 0.5) {
+					col.gameObject.SendMessage("TakeDamage", 10);
+				}
+			}
+		}
 	}
 }
