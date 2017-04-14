@@ -116,7 +116,6 @@ public class TileMapController : MonoBehaviour {
 	}
 
 	public TileDirection TileFlagsToTileDirection(tk2dTileFlags flags) {
-		print (flags);
 		bool flipVertical = (flags & tk2dTileFlags.FlipY) != 0;
 		bool flipHorizontal = (flags & tk2dTileFlags.FlipX) != 0;
 		bool flipDiagonal = (flags & tk2dTileFlags.Rot90) != 0;
