@@ -26,6 +26,7 @@ public class InventoryItemPanelController : MonoBehaviour {
 		button.onClick.AddListener (UseItem);
 
 		HideCount ();
+		HideIcon ();
 	}
 
 	public void AddItem(Item newItem) {
@@ -33,6 +34,7 @@ public class InventoryItemPanelController : MonoBehaviour {
 		SetCount (count + 1);
 		item = newItem;
 		ShowCount ();
+		ShowIcon ();
 	}
 
 	public void SetIcon(Sprite newIcon) {
@@ -83,6 +85,11 @@ public class InventoryItemPanelController : MonoBehaviour {
 	void UseItem() {
 		item.UseOnActor (GameObject.Find("Player"));
 		SetCount (count - 1);
+		if (count <= 0) {
+			HideIcon ();
+			HideCount ();
+			item = null;
+		}
 	}
 		
 }
