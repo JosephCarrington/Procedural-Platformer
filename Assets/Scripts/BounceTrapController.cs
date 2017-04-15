@@ -15,12 +15,12 @@ public class BounceTrapController : MonoBehaviour {
 		
 	bool sprung = false;
 	void OnTriggerEnter2D(Collider2D col) {
-		if (sprung && col.gameObject.GetComponent<Rigidbody2D>().velocity.y >= 0) {
+		if (sprung && col.gameObject.GetComponent<Rigidbody2D>() != null && col.gameObject.GetComponent<Rigidbody2D>().velocity.y >= 0) {
 			return;
 		}
 		if (col.gameObject.tag == "Player" || col.gameObject.GetComponent<Rigidbody2D>() != null) {
 			if (sprung) {
-				animator.SetTrigger ("Refire");
+				animator.SetTrigger ("Fire");
 			}
 			sprung = true;
 			Vector2 newVel = col.gameObject.GetComponent<Rigidbody2D> ().velocity;
@@ -30,7 +30,7 @@ public class BounceTrapController : MonoBehaviour {
 //			Vector2 newColliderOffset = gameObject.GetComponent<BoxCollider2D> ().offset;
 //			newColliderOffset.y = 0.12f;
 //			gameObject.GetComponent<BoxCollider2D> ().offset = newColliderOffset;
-			animator.SetBool ("Fire", true);
+			animator.SetTrigger("Fire");
 		}
 	}
 }

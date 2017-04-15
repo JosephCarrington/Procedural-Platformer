@@ -23,13 +23,13 @@ public class GrappleGunController : MonoBehaviour {
 			Vector3[] points = new Vector3[2];
 			points [0] = transform.position;
 			points [1] = hook.transform.position;
-			line.positionCount = 2;
+//			line.positionCount = 2;
 			line.SetPositions (points);
 		}
 		else {
 			if (Input.GetButton ("Fire1")) {
 				Vector3 mousePos = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0));
-				line.positionCount = 2;
+//				line.positionCount = 2;
 
 				RaycastHit2D hit = Physics2D.Raycast (transform.position, mousePos - transform.position, Mathf.Infinity, allButSelf);
 				print (hit.collider.name);
@@ -54,7 +54,7 @@ public class GrappleGunController : MonoBehaviour {
 				hook = GameObject.Instantiate (hook);
 				Rigidbody2D body = hook.GetComponent<Rigidbody2D> ();
 				body.velocity = (line.GetPosition (1) - transform.position) * fireSpeed;
-				line.positionCount = 0;
+//				line.positionCount = 0;
 
 //
 				fired = true;

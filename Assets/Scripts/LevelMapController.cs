@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelMapController : MonoBehaviour {
 
 	// Use this for initialization
-	GameObject player;
+//	GameObject player;
 	Rect startingViewportRect;
 	public Rect fullscreenViewportRect;
 
@@ -13,7 +13,7 @@ public class LevelMapController : MonoBehaviour {
 	public float fullScreenZoomFactor;
 
 	void Start () {
-		player = GameObject.Find ("Player");
+//		player = GameObject.Find ("Player");
 		startingViewportRect = gameObject.GetComponent<tk2dCamera> ().CameraSettings.rect;
 		startingZoomFactor = gameObject.GetComponent<tk2dCamera> ().ZoomFactor;
 

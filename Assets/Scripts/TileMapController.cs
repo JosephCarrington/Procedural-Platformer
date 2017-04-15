@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using Vaults;
 
 public class TileMapController : MonoBehaviour {
 
@@ -28,7 +29,7 @@ public class TileMapController : MonoBehaviour {
 
 	public bool IsWallAtCoords(Coordinates coords) {
 		if (coords.x < 0 || coords.x >= map.width || coords.y < 0 || coords.y >= map.height) {
-			print("Coords out of bounds : " + coords.ToString());
+//			print("Coords out of bounds : " + coords.ToString());
 			return false;
 		}
 		int wall = map.GetTile (coords.x, coords.y, 0);
@@ -64,6 +65,124 @@ public class TileMapController : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public void CreateVaultInRoom(Vault v, Room r) {
+		uint[,] tileInts = v.tileInts;
+
+
+
+		for (int x = 0; x < tileInts.GetLength(0); x++) {
+			for (int y = 0; y < tileInts.GetLength(1); y++) {
+				uint rawTile = tileInts [x, y];
+				int tile = (int)(rawTile & ~(0xE0000000)); // ignore flipping and rotating
+				Coordinates newCoords = new Coordinates (x, tileInts.GetLength(0) - 1 - y);
+				newCoords.x += r.pos.x;
+				newCoords.y += r.pos.y;
+				newCoords.x -= r.size.x / 4;
+//				newCoords.y -= r.size.y;
+				newCoords.y -= r.size.y / 4;
+
+				int layer = 0;
+				switch (tile) {
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+					CreateWallTileAt(newCoords);
+					break;
+				case 9:
+					break;
+				case 11: 
+					if(!IsWallAtCoords(newCoords)) {
+						CreateSpikeAt (newCoords);
+					}
+					break;
+				default:
+					break;
+				}
+
+				// Set tile flags
+				bool flipHorizontal = (rawTile & 0x80000000) != 0;
+				bool flipVertical = (rawTile & 0x40000000) != 0;
+				bool flipDiagonal = (rawTile & 0x20000000) != 0;
+				tk2dTileFlags tileFlags = 0;
+				if (flipDiagonal) tileFlags |= (tk2dTileFlags.Rot90 | tk2dTileFlags.FlipX);
+				if (flipHorizontal) tileFlags ^= tk2dTileFlags.FlipX;
+				if (flipVertical) tileFlags ^= tk2dTileFlags.FlipY;
+				map.SetTileFlags(newCoords.x, newCoords.y, 0, tileFlags);
+			}
+		}
+	}
+
+	public TileDirection TileFlagsToTileDirection(tk2dTileFlags flags) {
+		bool flipVertical = (flags & tk2dTileFlags.FlipY) != 0;
+		bool flipHorizontal = (flags & tk2dTileFlags.FlipX) != 0;
+		bool flipDiagonal = (flags & tk2dTileFlags.Rot90) != 0;
+		if (flipDiagonal) {
+			if (flipHorizontal) {
+				return TileDirection.Left;
+			}
+			return TileDirection.Right;
+		} else {
+			if (flipVertical) {
+				return TileDirection.Down;
+			}
+		}
+		return TileDirection.Up;
+	}
+	public enum TileType{
+		Empty,
+		Wall,
+		Lava,
+		Spike
+	}
+
+	public enum TileDirection{
+		Up,
+		Down,
+		Left,
+		Right
+	}
+	public class TileInfo {
+		public TileType type;
+		public TileDirection direction;
+	}
+
+	public TileInfo GetTileAtPosition(Vector2 pos) {
+		int x, y, tileId = -1;
+		TileDirection dir = TileDirection.Up;
+		if (map.GetTileAtPosition (pos, out x, out y)) {		
+			// Default to spike
+			tileId = map.GetTile(x, y, 0);
+			if (tileId != -1) {
+				// Something is here on the spike layer
+
+			}
+		}
+		tk2dTileFlags flags = map.GetTileFlags(x, y, 0);
+		dir = (TileFlagsToTileDirection (flags));
+
+		TileInfo tile = new TileInfo ();
+		switch (tileId) {
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			tile.type = TileType.Wall;
+			break;
+		case 8:
+			tile.type = TileType.Lava;
+			break;
+		case 10:
+			tile.type = TileType.Spike;
+			break;
+		default:
+			tile.type = TileType.Empty;
+			break;
+		}
+		tile.direction = dir;
+		return tile;
 	}
 
 	public int GetWallColumnHeight(Coordinates a) {
@@ -109,10 +228,24 @@ public class TileMapController : MonoBehaviour {
 	public void CreateWallTileAt(Coordinates c) {
 		map.SetTile (c.x, c.y, 0, Random.Range (4, 7));
 	}
+	public void CreateDebugTileAt(Coordinates c) {
+		map.SetTile (c.x, c.y, 0, 15);
+	}
 
 	public int spikeLayer = 3;
 	public void CreateSpikeAt(Coordinates c) {
-		map.SetTile (c.x, c.y, spikeLayer, 10);
+		map.SetTile (c.x, c.y, 0, 10);
+	}
+	public void CreateSpikeAt(Coordinates c, TileDirection d) {
+		tk2dTileFlags tileFlags = 0;
+		map.SetTile (c.x, c.y, 0, 10);
+		switch (d) {
+		case TileDirection.Down:
+			tileFlags ^= tk2dTileFlags.FlipY;
+			break;
+		}
+		map.SetTileFlags(c.x, c.y, 0, tileFlags);
+
 	}
 
 	public int slimeLayer = 4;

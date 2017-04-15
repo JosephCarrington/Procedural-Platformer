@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 using Utils;
+using Vaults;
 
 using Delaunay;
 using Delaunay.Geo;
@@ -19,6 +23,8 @@ public class LevelCreator : MonoBehaviour {
 	List<GameObject> finalRooms;
 	TileMapController map;
 	Rect levelBounds;
+	public GameObject boostPrefab;
+
 
 	void Start () {
 		finalRooms = new List<GameObject> ();
@@ -29,6 +35,252 @@ public class LevelCreator : MonoBehaviour {
 
 		groundDecorations = new GameObject[(int)level.mapSize.x, (int)level.mapSize.y];
 	}
+
+	IEnumerator CreateRooms(int numRooms) {
+		ReadVaults ();
+		//		ShuffleVaults ();
+		yield return StartCoroutine(CreateRects (numRooms));
+		SetMainRooms ();
+		CreateDelauneyAndTree ();
+		CreateCorridors ();
+
+		levelBounds = new Rect();
+		bool firstRoomSet = false;
+		foreach (GameObject room in rooms) {
+			if (room.layer != LayerMask.NameToLayer ("UnusedRoom")) {
+				if (!firstRoomSet) {
+					levelBounds = GetRect (room.transform);
+					firstRoomSet = true;
+				}
+				//				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
+				finalRooms.Add (GameObject.Instantiate (room, gameObject.transform));
+
+				Rect roomRect = GetRect (room.transform);
+				if (roomRect.xMin < levelBounds.xMin) {
+					levelBounds.xMin = roomRect.xMin;
+				}
+				if (roomRect.xMax > levelBounds.xMax) {
+					levelBounds.xMax = roomRect.xMax;
+				}
+				if (roomRect.yMin < levelBounds.yMin) {
+					levelBounds.yMin = roomRect.yMin;
+				}
+				if (roomRect.yMax > levelBounds.yMax) {
+					levelBounds.yMax = roomRect.yMax;
+				}
+
+			}
+			GameObject.Destroy (room);
+		}
+
+		foreach (Transform child in transform) {
+			child.GetComponent<SpriteRenderer> ().enabled = false;
+		}
+
+		levelBounds.xMin -= 1;
+		levelBounds.xMax += 1;
+		levelBounds.yMin -= 1;
+		levelBounds.yMax += 1;
+
+		//		tiles = new Tile[mapSize.x, mapSize.y];
+		foreach (Transform child in transform) {
+			//			WallInRoom (child.gameObject);
+			child.gameObject.AddComponent<Room>();
+			CarveOutRoom(child.gameObject);
+			Destroy (child.GetComponent<Rigidbody2D> ());
+			Destroy (child.GetComponent<BoxCollider2D> ());
+
+
+		}
+
+		player.SetActive (true);
+
+		Coordinates entranceRoomPos = null;
+		Room entranceRoom = null;
+		foreach(Transform child in transform) {
+			Room room = child.gameObject.GetComponent<Room> ();
+			if(map.DoesContinuousWallExist(
+				new Coordinates(room.bottomLeft.x, room.bottomLeft.y -1),
+				new Coordinates(room.bottomRight.x, room.bottomRight.y - 1)
+			)) {
+				entranceRoomPos = room.pos;
+				entranceRoom = room;
+				break;
+			}
+		}
+
+
+
+
+		bool wallUnder = false;
+		Coordinates playerPos = entranceRoomPos;
+		int currentYCheck = playerPos.y - 1;
+		while (!wallUnder) {
+			if (map.IsWallAtCoords (new Coordinates(playerPos.x, currentYCheck))) {
+				wallUnder = true;
+			} else {
+				currentYCheck--;
+			}
+		}
+		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1);
+		player.transform.position = newPlayerPos;
+		Vector3 boostPos = newPlayerPos;
+		boostPos.z = -2;
+		boostPos.y += 3;
+		for (int i = 0; i < 3; i++) {
+			GameObject.Instantiate (boostPrefab, boostPos, Quaternion.identity);
+		}
+
+
+		foreach (Transform child in transform) {
+			Room room = child.gameObject.GetComponent<Room>();
+			//			 Check to fill with vault
+			bool madeVault = false;
+			if (room != entranceRoom && Random.value < level.chanceToPlaceVault) {
+				foreach (Vault v in floatingVaults) {
+					if (v.size.x <= room.size.x && v.size.y <= room.size.y) {
+						v.ParseCSV ();
+						room.vault = v;
+						floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
+						map.CreateVaultInRoom (room.vault, room);
+
+						break;
+					}
+				}
+			}
+
+			if (madeVault) {
+			}
+
+			if (!madeVault && Random.value < level.chanceToAttemptLava) {
+				if(room != entranceRoom) {
+
+					// Check if there is lavaDepth depth of room cuppyness
+					Coordinates bottomLeftWall = new Coordinates(room.bottomLeft.x, room.bottomLeft.y),
+					bottomRightWall = new Coordinates(room.bottomRight.x, room.bottomRight.y);
+					bottomLeftWall.x -= 1;
+					bottomLeftWall.y -= 1;
+					bottomRightWall.x += 1;
+					bottomRightWall.y -= 1;
+
+					Coordinates leftCheck = new Coordinates(bottomLeftWall.x, bottomLeftWall.y),
+					rightCheck = new Coordinates(bottomRightWall.x, bottomRightWall.y);
+
+					leftCheck.y += level.lavaDepth;
+					rightCheck.y += level.lavaDepth;
+
+					if(map.DoesContinuousWallExist(bottomLeftWall, bottomRightWall)) {
+
+						int leftColHeight = map.GetWallColumnHeight (
+							new Coordinates (bottomLeftWall.x, bottomLeftWall.y + 1)
+						);
+						int rightColHeight = map.GetWallColumnHeight (
+							new Coordinates (bottomRightWall.x, bottomRightWall.y + 1)
+						);
+						if (leftColHeight > 0 && rightColHeight > 0) {
+							int lavaHeight = leftColHeight > rightColHeight ? rightColHeight : leftColHeight;
+							lavaHeight = lavaHeight > level.lavaDepth ? level.lavaDepth : lavaHeight;
+							map.CreateLava (
+								room.bottomLeft,
+								new Coordinates (room.bottomRight.x, room.bottomRight.y + lavaHeight - 1)
+							);
+						}
+
+					}
+				}
+			}
+
+			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
+				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+
+					bool spawnedEnemy = false;
+					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
+						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+						enemies.Add (newEnemy);
+						spawnedEnemy = true;
+					}
+
+					bool spawnedSpike = false;
+					if (!spawnedEnemy && room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
+						spawnedSpike = true;
+						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y), TileMapController.TileDirection.Up);
+//						GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+					}
+
+					//					bool spawnedTrap = false;
+					if (!spawnedSpike && room != entranceRoom && Random.value < level.chanceToSpawnTrap) {
+						//						spawnedTrap = true;
+						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+					}
+
+					if(!spawnedSpike && Random.value < level.chanceToSpawnGroundDecoration) {
+						GameObject newDeco = GameObject.Instantiate (
+							level.groundDecorations [Random.Range (0, level.groundDecorations.Length)],
+							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2),
+							Quaternion.identity
+						);
+						if (Random.value > 0.5) {
+							Vector3 newScale = newDeco.gameObject.transform.localScale;
+							newScale.x = -1;
+							newDeco.gameObject.transform.localScale = newScale;
+						}
+						groundDecorations [x, room.bottomLeft.y] = newDeco;
+					}
+
+
+				}
+			}
+			// Top Spikes
+			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
+				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
+					//					bool spawnedSpike = false;
+					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
+						//						spawnedSpike = true;
+//						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.topLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+//						Vector2 newScale = newSpike.transform.localScale;
+//						newScale.y = -1;
+//						newSpike.transform.localScale = newScale;
+						map.CreateSpikeAt (new Coordinates (x, room.topLeft.y), TileMapController.TileDirection.Down);
+
+					}
+				}
+			}
+		}
+
+		// Exit
+		Vector2 minExitRoomSize = new Vector2(8, 8);
+		bool placedExit = false;
+		foreach (Transform child in transform) {
+			Room room = child.gameObject.GetComponent<Room> ();
+			// Don't spawn the exit in the room we start in
+			if (room != entranceRoom) {
+				// Don't spawn the exit in a room that is too small
+				if (room.size.x >= minExitRoomSize.x && room.size.y >= minExitRoomSize.y) {
+					GameObject.Instantiate (level.exit, new Vector3 (room.pos.x - (level.mapSize.x / 2) + 0.5f, room.pos.y - ((level.mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
+					// Make a floor beneath it
+					map.CreateWallTileAt(new Coordinates(room.pos.x, room.pos.y -1));
+					map.CreateWallTileAt(new Coordinates(room.pos.x + 1, room.pos.y -1));
+					placedExit = true;
+				}
+				if (placedExit) {
+					break;
+				}
+			}
+		}
+
+		map.Build ();
+
+
+
+		Vector3 camPos = Camera.main.transform.position;
+		camPos.x = newPlayerPos.x;
+		camPos.y = newPlayerPos.y;
+
+		Camera.main.transform.position = camPos;
+		Camera.main.GetComponent<CameraController> ().enabled = true;
+
+	}
+
 
 	float meanHeight,
 		meanWidth;
@@ -43,9 +295,47 @@ public class LevelCreator : MonoBehaviour {
 
 	GameObject[,] groundDecorations;
 
-	public GameObject boostPrefab;
+	private List<Vault> floatingVaults =  new List<Vault>();
+	private List<Vault> entranceVaults = new List<Vault> ();
+	private List<Vault> exitVaults = new List<Vault> ();
 
-	IEnumerator CreateRooms(int numRooms) {
+
+	private void ReadVaults() {
+		Object[] raws = Resources.LoadAll ("Vaults", typeof(TextAsset));
+		TextAsset[] rawXMLs = new TextAsset[raws.Length];
+		int i = 0;
+		foreach (Object raw in raws) {
+			rawXMLs [i] = raw as TextAsset;
+			i++;
+		}
+
+		foreach (TextAsset rawXML in rawXMLs) {
+			XmlDocument vaultXML = new XmlDocument ();
+			vaultXML.LoadXml (rawXML.text);
+			Vault newVault = Utils.Utils.XMLToVault (vaultXML);
+			if (newVault.minDepth == -1 || newVault.minDepth >= level.depth) {
+				switch (newVault.type) {
+				case VaultType.Entrance:
+					entranceVaults.Add (newVault);
+					break;
+				case VaultType.Exit:
+					exitVaults.Add (newVault);
+					break;
+				case VaultType.Floating:
+					floatingVaults.Add (newVault);
+					break;
+				}
+			}
+		}
+	}
+
+	private void ShuffleVaults() {
+		floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
+		entranceVaults = Utils.Utils.ShuffleVaults (entranceVaults);
+		exitVaults = Utils.Utils.ShuffleVaults (exitVaults);
+	}
+
+	private IEnumerator CreateRects(int numRooms) {
 		meanWidth = level.minWidth + (level.widthVariance / 2);
 		meanHeight = level.minWidth + (level.heightVariance / 2);
 		rooms = new GameObject[level.roomCount];
@@ -79,10 +369,14 @@ public class LevelCreator : MonoBehaviour {
 			}
 		}
 
+//		yield return null;
+	}
+
+	List<GameObject> mainRooms;
+	void SetMainRooms() {
 		Time.fixedDeltaTime = 0.02f;
-		print ("all asleep at " + Time.time);
 		// Round positions of rooms to int and get 'main rooms'?
-		List<GameObject> mainRooms = new List<GameObject>();
+		mainRooms = new List<GameObject>();
 		foreach (GameObject room in rooms) {
 			room.GetComponent<Rigidbody2D> ().isKinematic = true;
 			Vector2 newPos = room.transform.position;
@@ -95,7 +389,9 @@ public class LevelCreator : MonoBehaviour {
 				mainRooms.Add (room);
 			}
 		}
+	}
 
+	void CreateDelauneyAndTree() {
 		mainRoomPoints = new Vector2[mainRooms.Count];
 		for (int i = 0; i < mainRooms.Count; i++) {
 			mainRoomPoints[i] = mainRooms [i].transform.position;
@@ -115,7 +411,9 @@ public class LevelCreator : MonoBehaviour {
 				corridors.Add(m_delaunayTriangulation[i]);
 			}
 		}
+	}
 
+	void CreateCorridors() {
 		corridors = corridors.Distinct ().ToList();
 		// For each corridor, add connections. TODO: This is a dumb
 		for (int i = 0; i < corridors.Count; i++) {
@@ -177,225 +475,8 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 		}
-
-		levelBounds = new Rect();
-		bool firstRoomSet = false;
-		foreach (GameObject room in rooms) {
-			if (room.layer != LayerMask.NameToLayer ("UnusedRoom")) {
-				if (!firstRoomSet) {
-					levelBounds = GetRect (room.transform);
-					firstRoomSet = true;
-				}
-				room.GetComponent<BoxCollider2D> ().usedByComposite = true;
-				finalRooms.Add (GameObject.Instantiate (room, gameObject.transform));
-
-				Rect roomRect = GetRect (room.transform);
-				if (roomRect.xMin < levelBounds.xMin) {
-					levelBounds.xMin = roomRect.xMin;
-				}
-				if (roomRect.xMax > levelBounds.xMax) {
-					levelBounds.xMax = roomRect.xMax;
-				}
-				if (roomRect.yMin < levelBounds.yMin) {
-					levelBounds.yMin = roomRect.yMin;
-				}
-				if (roomRect.yMax > levelBounds.yMax) {
-					levelBounds.yMax = roomRect.yMax;
-				}
-
-			}
-			GameObject.Destroy (room);
-		}
-
-		foreach (Transform child in transform) {
-			child.GetComponent<SpriteRenderer> ().enabled = false;
-		}
-
-		levelBounds.xMin -= 1;
-		levelBounds.xMax += 1;
-		levelBounds.yMin -= 1;
-		levelBounds.yMax += 1;
-
-//		tiles = new Tile[mapSize.x, mapSize.y];
-		foreach (Transform child in transform) {
-//			WallInRoom (child.gameObject);
-			child.gameObject.AddComponent<Room>();
-			CarveOutRoom(child.gameObject);
-			Destroy (child.GetComponent<Rigidbody2D> ());
-			Destroy (child.GetComponent<BoxCollider2D> ());
-
-
-		}
-
-		player.SetActive (true);
-
-		Coordinates entranceRoomPos = null;
-		Room entranceRoom = null;
-		foreach(Transform child in transform) {
-			Room room = child.gameObject.GetComponent<Room> ();
-			if(map.DoesContinuousWallExist(
-				new Coordinates(room.bottomLeft.x, room.bottomLeft.y -1),
-				new Coordinates(room.bottomRight.x, room.bottomRight.y - 1)
-			)) {
-				entranceRoomPos = room.pos;
-				entranceRoom = room;
-				break;
-			}
-		}
-
-
-
-
-		bool wallUnder = false;
-		Coordinates playerPos = entranceRoomPos;
-		int currentYCheck = playerPos.y - 1;
-		while (!wallUnder) {
-			if (map.IsWallAtCoords (new Coordinates(playerPos.x, currentYCheck))) {
-				wallUnder = true;
-			} else {
-				currentYCheck--;
-			}
-		}
-		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1);
-		player.transform.position = newPlayerPos;
-		Vector3 boostPos = newPlayerPos;
-		boostPos.z = -2;
-		boostPos.y += 3;
-		for (int i = 0; i < 3; i++) {
-			GameObject.Instantiate (boostPrefab, boostPos, Quaternion.identity);
-		}
-
-		foreach (Transform child in transform) {
-			if (Random.value < level.chanceToAttemptLava) {
-				Room room = child.GetComponent<Room> ();
-				if(room != entranceRoom) {
-
-					// Check if there is lavaDepth depth of room cuppyness
-					Coordinates bottomLeftWall = new Coordinates(room.bottomLeft.x, room.bottomLeft.y),
-					bottomRightWall = new Coordinates(room.bottomRight.x, room.bottomRight.y);
-					bottomLeftWall.x -= 1;
-					bottomLeftWall.y -= 1;
-					bottomRightWall.x += 1;
-					bottomRightWall.y -= 1;
-
-					Coordinates leftCheck = new Coordinates(bottomLeftWall.x, bottomLeftWall.y),
-					rightCheck = new Coordinates(bottomRightWall.x, bottomRightWall.y);
-
-					leftCheck.y += level.lavaDepth;
-					rightCheck.y += level.lavaDepth;
-
-					if(map.DoesContinuousWallExist(bottomLeftWall, bottomRightWall)) {
-						
-						int leftColHeight = map.GetWallColumnHeight (
-							new Coordinates (bottomLeftWall.x, bottomLeftWall.y + 1)
-	                    );
-						int rightColHeight = map.GetWallColumnHeight (
-							new Coordinates (bottomRightWall.x, bottomRightWall.y + 1)
-						);
-						if (leftColHeight > 0 && rightColHeight > 0) {
-							int lavaHeight = leftColHeight > rightColHeight ? rightColHeight : leftColHeight;
-							lavaHeight = lavaHeight > level.lavaDepth ? level.lavaDepth : lavaHeight;
-							map.CreateLava (
-								room.bottomLeft,
-								new Coordinates (room.bottomRight.x, room.bottomRight.y + lavaHeight - 1)
-							);
-						}
-
-					}
-				}
-			}
-		}
-			
-		// Ground deco, enemies, spikes, traps
-		foreach(Transform child in transform) {
-			Room room = child.gameObject.GetComponent<Room>();
-			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
-				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
-					
-					bool spawnedEnemy = false;
-					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
-						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
-						enemies.Add (newEnemy);
-						spawnedEnemy = true;
-					}
-
-					bool spawnedSpike = false;
-					if (!spawnedEnemy && room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
-						spawnedSpike = true;
-//						map.CreateSpikeAt (new Coordinates (x, room.bottomLeft.y));
-						GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
-					}
-
-//					bool spawnedTrap = false;
-					if (!spawnedSpike && room != entranceRoom && Random.value < level.chanceToSpawnTrap) {
-//						spawnedTrap = true;
-						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
-					}
-
-					if(!spawnedSpike && Random.value < level.chanceToSpawnGroundDecoration) {
-						GameObject newDeco = GameObject.Instantiate (
-							level.groundDecorations [Random.Range (0, level.groundDecorations.Length)],
-							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2),
-							Quaternion.identity
-						);
-						if (Random.value > 0.5) {
-							Vector3 newScale = newDeco.gameObject.transform.localScale;
-							newScale.x = -1;
-							newDeco.gameObject.transform.localScale = newScale;
-						}
-						groundDecorations [x, room.bottomLeft.y] = newDeco;
-					}
-
-
-				}
-			}
-			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
-				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
-//					bool spawnedSpike = false;
-					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
-//						spawnedSpike = true;
-						GameObject newSpike = GameObject.Instantiate(level.spike, new Vector3(x - level.mapSize.x / 2, room.topLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
-						Vector2 newScale = newSpike.transform.localScale;
-						newScale.y = -1;
-						newSpike.transform.localScale = newScale;
-					}
-				}
-			}
-		}
-
-		// Exit
-		Vector2 minExitRoomSize = new Vector2(8, 8);
-		bool placedExit = false;
-		foreach (Transform child in transform) {
-			Room room = child.gameObject.GetComponent<Room> ();
-			// Don't spawn the exit in the room we start in
-			if (room != entranceRoom) {
-				// Don't spawn the exit in a room that is too small
-				if (room.size.x >= minExitRoomSize.x && room.size.y >= minExitRoomSize.y) {
-					GameObject.Instantiate (level.exit, new Vector3 (room.pos.x - (level.mapSize.x / 2) + 0.5f, room.pos.y - ((level.mapSize.y / 2) -1) - 0.5f, -1), Quaternion.identity);
-					// Make a floor beneath it
-					map.CreateWallTileAt(new Coordinates(room.pos.x, room.pos.y -1));
-					map.CreateWallTileAt(new Coordinates(room.pos.x + 1, room.pos.y -1));
-					placedExit = true;
-				}
-				if (placedExit) {
-					break;
-				}
-			}
-		}
-
-		map.Build ();
-
-
-
-		Vector3 camPos = Camera.main.transform.position;
-		camPos.x = newPlayerPos.x;
-		camPos.y = newPlayerPos.y;
-
-		Camera.main.transform.position = camPos;
-		Camera.main.GetComponent<CameraController> ().enabled = true;
-
 	}
+
 
 	void CarveOutRoom(GameObject room) {
 //		Rect bounds = GetRect (room.transform);
@@ -474,7 +555,7 @@ public class LevelCreator : MonoBehaviour {
 	void CreateCorridor(Vector2 start, Vector2 end) {
 		Vector2 midPoint = (start + end) / 2;
 		GameObject corridor = GameObject.Instantiate (level.defaultRoom, gameObject.transform);
-		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
+//		corridor.GetComponent<BoxCollider2D> ().usedByComposite = true;
 		corridor.GetComponent<Rigidbody2D> ().isKinematic = true;
 		corridor.name = "Corridor";
 		corridor.transform.position = midPoint;
