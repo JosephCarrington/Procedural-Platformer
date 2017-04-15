@@ -23,6 +23,8 @@ public class LevelCreator : MonoBehaviour {
 	List<GameObject> finalRooms;
 	TileMapController map;
 	Rect levelBounds;
+	public GameObject boostPrefab;
+
 
 	void Start () {
 		finalRooms = new List<GameObject> ();
@@ -128,6 +130,7 @@ public class LevelCreator : MonoBehaviour {
 		for (int i = 0; i < 3; i++) {
 			GameObject.Instantiate (boostPrefab, boostPos, Quaternion.identity);
 		}
+
 
 		foreach (Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
@@ -292,7 +295,6 @@ public class LevelCreator : MonoBehaviour {
 
 	GameObject[,] groundDecorations;
 
-	public GameObject boostPrefab;
 	private List<Vault> floatingVaults =  new List<Vault>();
 	private List<Vault> entranceVaults = new List<Vault> ();
 	private List<Vault> exitVaults = new List<Vault> ();

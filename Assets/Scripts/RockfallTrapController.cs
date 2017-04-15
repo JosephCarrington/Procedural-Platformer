@@ -6,15 +6,15 @@ using Utils;
 public class RockfallTrapController : MonoBehaviour {
 
 	// Use this for initialization
-	GameObject holder, plate, rock;
+	GameObject holder, rock;
 	TileMapController mapController;
 	void Start () {
 		holder = transform.Find ("Holder").gameObject;
-		plate = transform.Find ("Plate").gameObject;
+//		plate = transform.Find ("Plate").gameObject;
 		rock = transform.Find ("Rock").gameObject;
 		mapController = GameObject.Find ("TileMap").GetComponent<TileMapController>();
 		int minHeightCheck = 4;
-		int maxHeightCheck = 32;
+		int maxHeightCheck = 64;
 		bool madeTrap = false;
 //		for (int y = Mathf.RoundToInt(transform.position.y) + minHeightCheck; y < Mathf.RoundToInt(transform.position.y) + maxHeightCheck; y++) {
 //			TileMapController.TileInfo tile = mapController.GetTileAtPosition (transform.position);
