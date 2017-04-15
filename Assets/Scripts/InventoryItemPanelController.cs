@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Inventory;
 
 public class InventoryItemPanelController : MonoBehaviour {
 
@@ -15,7 +16,7 @@ public class InventoryItemPanelController : MonoBehaviour {
 
 	Button button;
 
-	public GameObject item;
+	public Item item;
 
 	void Awake () {
 		itemIcon = transform.Find ("Icon").gameObject.GetComponent<Image> ();
@@ -27,12 +28,24 @@ public class InventoryItemPanelController : MonoBehaviour {
 		HideCount ();
 	}
 
+	public void AddItem(Item newItem) {
+		SetIcon (newItem.icon);
+		SetCount (count + 1);
+		item = newItem;
+		ShowCount ();
+	}
+
 	public void SetIcon(Sprite newIcon) {
 		itemIcon.sprite = newIcon;
 		itemIcon.enabled = true;
 	}
 
 	public void SetCount(int newCount) {
+		if (newCount < 1) {
+			HideCount ();
+
+		} else
+			ShowCount ();
 		itemCount.text = newCount.ToString ();
 		count = newCount;
 	}
@@ -55,30 +68,21 @@ public class InventoryItemPanelController : MonoBehaviour {
 		newColor.a = 0;
 		itemCount.color = newColor;
 	}
-
-	public void AddItem(GameObject newItem) {
-		// If we already have an item in here, make sure it matches the new one
- 		if (item != null) {
-			if (newItem.name == itemName) {
-				Destroy (newItem);
-				SetCount (count + 1);
-
-			} else {
-				Debug.LogError ("Cannot add item to inventory at slot. Slot contains a different inventory item");
-			}
-		} else {
-			// We do not have an item in this slot, so add the new one
-			SetIcon (newItem.GetComponent<Collectible> ().itemIcon);
-			itemName = newItem.name;
-			SetCount (1);
-			item = newItem;
-			ShowCount ();
-		}
+	void ShowIcon() {
+		Color newColor = itemIcon.color;
+		newColor.a = 1;
+		itemIcon.color = newColor;
 	}
 
-	public void UseItem() {
-		item.GetComponent<InventoryItem> ().UseOnSelf ();
+	void HideIcon() {
+		Color newColor = itemIcon.color;
+		newColor.a = 0;
+		itemIcon.color = newColor;
+	}
+
+	void UseItem() {
+		item.UseOnActor (GameObject.Find("Player"));
 		SetCount (count - 1);
-
 	}
+		
 }

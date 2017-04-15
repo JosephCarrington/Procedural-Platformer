@@ -1,46 +1,90 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inventory;
 
 public class InventoryDisplayController : MonoBehaviour {
+	private int slotCount = 2;
+	private List<GameObject> slots = new List<GameObject>();
 
-	private InventoryItemPanelController[] slots;
-	void Start() {
-		slots = new InventoryItemPanelController[9];
-		int i = 0;
+	public void Start() {
 		foreach (Transform child in transform) {
-			slots [i] = child.GetComponent<InventoryItemPanelController> ();
-			i++;
+			slots.Add (child.gameObject);
 		}
-	}
+		UpdateDisplayCount ();
 
-	public int GetItemSlot() {
-		return GetFirstEmptySlot ();
 	}
-	public int GetItemSlot(GameObject item) {
-		int i = 0;
-		foreach(InventoryItemPanelController slot in slots) {
-			if (slot.item == item.GetComponent<InventoryItem>()) {
-				return i;
-			}	
-			i++;
-		}
-		return(GetItemSlot ());
-	}
+	public void UpdateDisplayCount() {
+		int i = 1;
 
-	int GetFirstEmptySlot() {
-		int i = 0;
-		foreach(InventoryItemPanelController slot in slots) {
-			if (slot.IsEmpty ()) {
-				return i;
-			}	
+
+		foreach (GameObject slot in slots) {
+			slot.SetActive (false);
+			if (i > slotCount) {
+				continue;
+			}
+
+			slot.SetActive (true);
 			i++;
 		}
 
-		return -1;
+
+		Vector2 newSize = gameObject.GetComponent<RectTransform> ().sizeDelta;
+		newSize.x = slotCount * 100f;
+		gameObject.GetComponent<RectTransform> ().sizeDelta = newSize;
 	}
 
-	public void AddItemAtSlot(GameObject item, int slot) {
-		slots [slot].AddItem (item);
+	public bool AddItem(Item item) {
+		if (!HasEmptySlot ()) {
+			return false;
+		}
+		GameObject newSlot = GetSlotForItem (item);
+		if (newSlot == null) {
+			return false;
+		}
+		newSlot.GetComponent<InventoryItemPanelController> ().AddItem (item);
+		return true;
+	}
+
+	private GameObject GetSlotForItem(Item item) {
+		GameObject returnSlot = null;
+		foreach (GameObject slot in slots) {
+			if (slot.GetComponent<InventoryItemPanelController> ().item == item) {
+				returnSlot = slot;
+				break;
+			}
+		}
+
+		if (returnSlot == null) {
+			returnSlot = GetFirstEmptySlot ();
+		}
+
+		return returnSlot;
+	}
+
+	private bool HasEmptySlot() {
+		foreach (GameObject slot in slots) {
+			if (!slot.activeSelf) {
+				continue;
+			}
+			if(slot.GetComponent<InventoryItemPanelController>().IsEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private GameObject GetFirstEmptySlot() {
+		GameObject returnSlot = null;
+		foreach (GameObject slot in slots) {
+			if (!slot.activeSelf) {
+				continue;
+			}
+			if(slot.GetComponent<InventoryItemPanelController>().IsEmpty()) {
+				returnSlot = slot;
+				break;
+			}
+		}
+		return returnSlot;
 	}
 }
