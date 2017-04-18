@@ -177,6 +177,7 @@ public class PlayerController : MonoBehaviour {
 				newVel.y += extraJumpStrength;
 			}
 		}
+		gameObject.GetComponent<Animator> ().SetFloat ("xVelocity", newVel.x);
 		body.velocity = newVel;
 	}
 

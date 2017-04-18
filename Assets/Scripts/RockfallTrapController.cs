@@ -62,8 +62,9 @@ public class RockfallTrapController : MonoBehaviour {
 	bool triggered = false;
 	void TriggerTrap() {
 		if (!triggered) {
+			rock.gameObject.GetComponent<RockfallTrapRockController>().triggered = true;
 			rock.gameObject.GetComponent<Rigidbody2D> ().isKinematic = false;
-			rock.gameObject.GetComponent<Rigidbody2D> ().AddTorque (Random.Range (-10, 10), ForceMode2D.Impulse);
+			rock.gameObject.GetComponent<Rigidbody2D> ().AddTorque (Random.Range (-30, 30), ForceMode2D.Impulse);
 		}
 		triggered = true;
 	}
