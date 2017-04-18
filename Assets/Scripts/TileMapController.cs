@@ -149,6 +149,12 @@ public class TileMapController : MonoBehaviour {
 		public TileDirection direction;
 	}
 
+	public Coordinates PositionToCoordinates(Vector2 pos) {
+		return new Coordinates(Mathf.RoundToInt(pos.x + Utils.Utils.mapSize.x / 2),
+			Mathf.RoundToInt(pos.y + Utils.Utils.mapSize.y / 2)
+		);
+
+	}
 	public TileInfo GetTileAtPosition(Vector2 pos) {
 		int x, y, tileId = -1;
 		TileDirection dir = TileDirection.Up;
@@ -156,7 +162,6 @@ public class TileMapController : MonoBehaviour {
 			// Default to spike
 			tileId = map.GetTile(x, y, 0);
 			if (tileId != -1) {
-				// Something is here on the spike layer
 
 			}
 		}
@@ -251,7 +256,8 @@ public class TileMapController : MonoBehaviour {
 	public int slimeLayer = 4;
 	public void CreateSlimeAt(Coordinates c) {
 		CreateEmptyTileAt (c);
-		map.SetTile (c.x, c.y, slimeLayer, 12);
+		map.SetTile (c.x, c.y, 0, 12);
+		map.Build ();
 	}
 	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
 //		Color lineColor = a.x != b.x ? Color.red : Color.blue;

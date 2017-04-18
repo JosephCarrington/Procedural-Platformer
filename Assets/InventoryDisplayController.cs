@@ -35,9 +35,7 @@ public class InventoryDisplayController : MonoBehaviour {
 	}
 
 	public bool AddItem(Item item) {
-		if (!HasEmptySlot ()) {
-			return false;
-		}
+
 		GameObject newSlot = GetSlotForItem (item);
 		if (newSlot == null) {
 			return false;
