@@ -256,7 +256,7 @@ public class TileMapController : MonoBehaviour {
 	public int slimeLayer = 4;
 	public void CreateSlimeAt(Coordinates c) {
 		CreateEmptyTileAt (c);
-		map.SetTile (c.x, c.y, 0, 12);
+		map.SetTile (c.x, c.y, slimeLayer, 12);
 		map.Build ();
 	}
 	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
