@@ -123,7 +123,7 @@ public class SlimeController : MonoBehaviour {
 		// Slime ground
 		Usage usage = ScriptableObject.CreateInstance("SlimeUsage") as Usage;
 		usage.UseAtPosition (transform.position);
-		Destroy (usage);
+		GameObject.Destroy (usage);
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
