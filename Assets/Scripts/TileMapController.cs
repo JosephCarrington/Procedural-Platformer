@@ -257,7 +257,7 @@ public class TileMapController : MonoBehaviour {
 	public void CreateSlimeAt(Coordinates c) {
 		CreateEmptyTileAt (c);
 		map.SetTile (c.x, c.y, slimeLayer, 12);
-		map.Build ();
+		Build ();
 	}
 	public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
 //		Color lineColor = a.x != b.x ? Color.red : Color.blue;
@@ -275,5 +275,20 @@ public class TileMapController : MonoBehaviour {
 
 	public void Build() {
 		map.Build ();
+		RecreateLiquids ();
+
+	}
+
+	public void RecreateLiquids() {
+//		GameObject lava = GameObject.Find ("Lava");
+//		foreach (Transform child in lava.transform) {
+//			// Remove any boyouncy effectors
+////			Debug.Break();
+//			GameObject.DestroyImmediate(child.gameObject.GetComponent<BuoyancyEffector2D>());
+//
+//			child.gameObject.GetComponent<EdgeCollider2D> ().isTrigger = true;
+//			child.gameObject.GetComponent<EdgeCollider2D> ().usedByEffector = true;
+//			child.gameObject.AddComponent<BuoyancyEffector2D> ();
+//		}
 	}
 }
