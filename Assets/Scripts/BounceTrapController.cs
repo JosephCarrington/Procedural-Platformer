@@ -15,6 +15,9 @@ public class BounceTrapController : MonoBehaviour {
 		
 	bool sprung = false;
 	void OnTriggerEnter2D(Collider2D col) {
+		if (col.isTrigger) {
+			return;
+		}
 		if (sprung && col.gameObject.GetComponent<Rigidbody2D>() != null && col.gameObject.GetComponent<Rigidbody2D>().velocity.y >= 0) {
 			return;
 		}
@@ -22,6 +25,7 @@ public class BounceTrapController : MonoBehaviour {
 			if (sprung) {
 				animator.SetTrigger ("Fire");
 			}
+			col.gameObject.GetComponent<Rigidbody2D> ().collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 			sprung = true;
 			Vector2 newVel = col.gameObject.GetComponent<Rigidbody2D> ().velocity;
 			newVel.y = 0;
