@@ -25,6 +25,7 @@ public class BounceTrapController : MonoBehaviour {
 			if (sprung) {
 				animator.SetTrigger ("Fire");
 			}
+			col.gameObject.GetComponent<Rigidbody2D> ().collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 			sprung = true;
 			Vector2 newVel = col.gameObject.GetComponent<Rigidbody2D> ().velocity;
 			newVel.y = 0;

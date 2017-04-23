@@ -82,4 +82,25 @@ public class ChickenController : MonoBehaviour {
 			}
 		}
 	}
+
+	void OnCollisionEnter2D(Collision2D col) {
+		if (col.gameObject.name == "Player") {
+			if (col.contacts [0].normal.y < 0) {
+				if (col.relativeVelocity.magnitude > 1f) {
+					col.gameObject.GetComponent<PlayerController> ().BounceOffEnemy (1f);
+					gameObject.SendMessage ("TakeDamage", 1);
+				}
+			}
+		}
+	}
+
+	public GameObject featherPrefab;
+	void Die() {
+		GameObject newFeather = GameObject.Instantiate(featherPrefab, new Vector3(transform.position.x, transform.position.y, -2), Quaternion.identity);
+		newFeather.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-8f, 8f), Random.Range(2f, 4f)), ForceMode2D.Impulse);
+		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
+		gameObject.GetComponent<CircleCollider2D> ().enabled = false;
+		gameObject.GetComponent<ParticleSystem> ().Play ();
+		Destroy (gameObject, 0.5f);
+	}
 }
