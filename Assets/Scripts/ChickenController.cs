@@ -31,9 +31,9 @@ public class ChickenController : MonoBehaviour {
 			animator.SetBool ("Walking", false);
 
 			if (Time.time > lastFlapTime + flapSpeed) {
-				lastFlapTime = Time.time;
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (flapForce, ForceMode2D.Impulse);
+				Flap (flapForce);
 			}
+				
 		} else {
 			animator.SetBool ("Flying", false);
 			if (gameObject.GetComponent<Rigidbody2D> ().velocity.x != 0f) {
@@ -54,6 +54,11 @@ public class ChickenController : MonoBehaviour {
 		
 	}
 
+	void Flap(Vector2 force) {
+		lastFlapTime = Time.time;
+		gameObject.GetComponent<Rigidbody2D> ().AddForce (flapForce, ForceMode2D.Impulse);
+	}
+
 	bool IsGrounded() {
 		RaycastHit2D hit = Physics2D.Raycast (transform.position, -Vector2.up, 0.51f);
 		if (hit.collider != null) {
@@ -64,17 +69,17 @@ public class ChickenController : MonoBehaviour {
 	IEnumerator SelectNextAction() {
 		yield return null;
 	}
-
-	float moveStartTime;
-	public float moveTime = 1f;
-	IEnumerator Walk(Vector2 targetPos) {
-		moveStartTime = Time.time;
-		animator.SetBool ("Idle", false);
-		Vector2 startPos = gameObject.transform.position;
-		while (Vector2.Distance (gameObject.transform.position, targetPos) < 0.1) {
-			Vector2 currentPos = gameObject.transform.position;
-			currentPos = Vector2.Lerp(startPos, targetPos, Utils.Utils.GetBetweenValue(moveStartTime, moveStartTime + moveTime, Time.time));
-			yield return null;
+		
+	void OnTriggerStay2D(Collider2D col) {
+		if (col.gameObject.name == "Player") {
+			Vector2 direction = gameObject.transform.position - col.gameObject.transform.position;
+			gameObject.GetComponent<Rigidbody2D> ().AddForce (direction * 100 * Time.deltaTime);
+			RaycastHit2D hit = Physics2D.Raycast (transform.position, new Vector2 (transform.localScale.x, 0), 0.6f);
+			if (hit.collider != null) {
+				if (Time.time > lastFlapTime + flapSpeed) {
+					Flap (flapForce);
+				}
+			}
 		}
 	}
 }
