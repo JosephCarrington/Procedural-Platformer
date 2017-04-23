@@ -5,7 +5,7 @@ using Inventory;
 public class PickupController : MonoBehaviour {
 
 	float dontPickupTime = 0.5f;
-	private float startTime;
+	public float startTime;
 	public Item[] itemsToGet;
 
 	public void Start() {
