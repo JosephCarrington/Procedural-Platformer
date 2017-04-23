@@ -8,6 +8,9 @@ public class DestroyableController : MonoBehaviour {
 	public Sprite destroyedSprite;
 	private bool destroyed = false;
 	void OnTriggerEnter2D(Collider2D col) {
+		if (col.isTrigger) {
+			return;
+		}
 		if (!destroyed) {
 			destroyed = true;
 			gameObject.GetComponent<SpriteRenderer> ().sprite = destroyedSprite;

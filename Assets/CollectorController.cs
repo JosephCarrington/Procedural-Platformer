@@ -36,13 +36,13 @@ public class CollectorController : MonoBehaviour {
 		if (lookingAtPlayer) {
 			Vector2 difference = player.transform.position - transform.position;
 			if (Mathf.Sign (difference.x) != Mathf.Sign (gameObject.transform.localScale.x)) {
-				Vector2 newScale = gameObject.transform.localScale;
+				Vector3 newScale = gameObject.transform.localScale;
 				newScale.x = -newScale.x;
 				gameObject.transform.localScale = newScale;
 			}
 		} else {
 			if (Mathf.Sign (gameObject.GetComponent<Rigidbody2D> ().velocity.x) != Mathf.Sign (gameObject.transform.localScale.x)) {
-				Vector2 newScale = gameObject.transform.localScale;
+				Vector3 newScale = gameObject.transform.localScale;
 				newScale.x = -newScale.x;
 				gameObject.transform.localScale = newScale;
 			}
@@ -56,7 +56,7 @@ public class CollectorController : MonoBehaviour {
 			animator.SetBool ("Cowering", true);
 			Vector2 difference = player.transform.position - transform.position;
 			if (CheckGround ()) {
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (-difference.x, 20), ForceMode2D.Impulse);
+				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (-difference.x, 20 + Random.value), ForceMode2D.Impulse);
 				lookingAtPlayer = false;
 				StartCoroutine(LookAtPlayerAgain(5f));
 			}
@@ -71,6 +71,24 @@ public class CollectorController : MonoBehaviour {
 			animator.SetBool ("Cowering", false);
 
 		}
+	}
+
+	void OnCollisionEnter2D(Collision2D col) {
+		if (col.gameObject.name == "Player") {
+			if (col.contacts [0].normal.y < 0) {
+				if (col.relativeVelocity.magnitude > 1f) {
+					col.gameObject.GetComponent<PlayerController> ().BounceOffEnemy (1f);
+					gameObject.SendMessage ("TakeDamage", 1);
+				}
+			}
+		}
+	}
+
+	void Die() {
+		gameObject.GetComponent<ParticleSystem> ().Play ();
+		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
+		gameObject.GetComponent<Collider2D> ().enabled = false;
+		Destroy (gameObject, 0.5f);
 	}
 
 	IEnumerator LookAtPlayerAgain(float t) {
