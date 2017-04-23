@@ -255,7 +255,7 @@ public class TileMapController : MonoBehaviour {
 
 	public int slimeLayer = 4;
 	public void CreateSlimeAt(Coordinates c) {
-		CreateEmptyTileAt (c);
+//		CreateEmptyTileAt (c);
 		map.SetTile (c.x, c.y, slimeLayer, 12);
 		Build ();
 	}
