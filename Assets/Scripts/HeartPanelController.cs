@@ -7,18 +7,10 @@ public class HeartPanelController : MonoBehaviour {
 
 	List<GameObject> hearts = new List<GameObject>();
 
-	void Start() {
+	void Awake() {
 		foreach (Transform child in transform) {
 			hearts.Add (child.gameObject);
 		}
-		
-	}
-	void Awake () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
 		
 	}
 
