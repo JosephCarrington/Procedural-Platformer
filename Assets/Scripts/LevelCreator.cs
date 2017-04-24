@@ -213,7 +213,9 @@ public class LevelCreator : MonoBehaviour {
 						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
 					}
 
+					bool spawnedDeco = false;
 					if(!spawnedSpike && Random.value < level.chanceToSpawnGroundDecoration) {
+						spawnedDeco = true;
 						GameObject newDeco = GameObject.Instantiate (
 							level.groundDecorations [Random.Range (0, level.groundDecorations.Length)],
 							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2),
@@ -226,8 +228,14 @@ public class LevelCreator : MonoBehaviour {
 						}
 						groundDecorations [x, room.bottomLeft.y] = newDeco;
 					}
-
-
+					if (!spawnedDeco && Random.value < level.chanceToSpawnTreasure) {
+						GameObject newDeco = GameObject.Instantiate (
+							level.treasure [Random.Range (0, level.treasure.Length)],
+							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1),
+							Quaternion.identity
+						);
+						print ("Spawned treasure");
+					}
 				}
 			}
 			// Top Spikes

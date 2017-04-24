@@ -130,7 +130,6 @@ public class CollectorController : MonoBehaviour {
 	}
 
 	void Die() {
-		print (transform.childCount);
 		foreach (GameObject item in heldItems) {
 
 			item.SetActive (true);
