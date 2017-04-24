@@ -27,4 +27,20 @@ public class HPController : MonoBehaviour {
 		gameObject.GetComponent<SpriteRenderer> ().color = startColor;
 
 	}
+	private bool onFire = false;
+	void OnCollisionEnter2D(Collision2D col) {
+		if (!onFire && col.gameObject.layer == LayerMask.NameToLayer("BadWall")) {
+			onFire = true;
+			GameObject.Instantiate (Resources.Load ("Fire"), gameObject.transform);
+			StartCoroutine (DieEventually (1f));
+
+		}
+	}
+
+	IEnumerator DieEventually(float hurtTime) {
+		while (hp > 0) {
+			TakeDamage (1);
+			yield return new WaitForSeconds (hurtTime);
+		}
+	}
 }
