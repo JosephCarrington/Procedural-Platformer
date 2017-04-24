@@ -310,6 +310,6 @@ public class PlayerController : MonoBehaviour {
 
 	IEnumerator ReloadScene(){
 		yield return new WaitForSeconds (knockBackControlLoss);
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 }
