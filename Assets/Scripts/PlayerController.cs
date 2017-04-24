@@ -264,6 +264,12 @@ public class PlayerController : MonoBehaviour {
 			Die ();
 		}
 	}
+
+	public void HealDamage(int amount) {
+		hp += amount;
+		hpDisplay.GetComponent<HeartPanelController> ().SetHeartCount (hp);
+	}
+
 	public float knockBackControlLoss = 0.5f;
 	private float lastKnockBack;
 	public void KnockBack(Vector2 knockBackForce) {
