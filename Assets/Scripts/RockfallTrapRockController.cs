@@ -5,6 +5,10 @@ using UnityEngine;
 public class RockfallTrapRockController : MonoBehaviour {
 	bool didDamage = false;
 	public bool triggered = false;
+
+	public void Start() {
+		Physics2D.IgnoreLayerCollision (gameObject.layer, LayerMask.NameToLayer ("BadWall"));
+	}
 	public void OnCollisionEnter2D(Collision2D col) {
 		int damageVelocity = 2;
 		if (triggered && !didDamage && Mathf.Abs(col.relativeVelocity.y) > damageVelocity) {

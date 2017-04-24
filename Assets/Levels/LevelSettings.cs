@@ -49,4 +49,9 @@ public class LevelSettings : ScriptableObject {
 
 	[Header("Exit")]
 	public GameObject exit;
+
+	[Header("Treasure")]
+	[Range(0f, 1f)]
+	public float chanceToSpawnTreasure = 0.01f;
+	public GameObject[] treasure;
 }

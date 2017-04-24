@@ -26,4 +26,12 @@ public class PickupController : MonoBehaviour {
 		}
 	}
 
+	bool onFire = false;
+	public void OnCollisionEnter2D(Collision2D col) {
+		if (!onFire && col.gameObject.layer == LayerMask.NameToLayer ("BadWall")) {
+			onFire = true;
+			GameObject.Instantiate (Resources.Load ("Fire"), gameObject.transform);
+			Destroy (gameObject, 1f);
+		}
+	}
 }

@@ -15,8 +15,8 @@ public class ExitController : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D(Collider2D col) {
-		if (Input.GetButtonDown ("Interact")) {
-			GameObject.Find ("Player").SendMessage ("Die");
-		}
+//		if (Input.GetButtonDown ("Interact")) {
+//			GameObject.Find ("Player").SendMessage ("Die");
+//		}
 	}
 }
