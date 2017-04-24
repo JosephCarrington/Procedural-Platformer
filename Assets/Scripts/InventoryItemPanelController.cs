@@ -83,6 +83,9 @@ public class InventoryItemPanelController : MonoBehaviour {
 	}
 
 	void UseItem() {
+		if (item == null) {
+			return;
+		}
 		item.UseOnActor (GameObject.Find("Player"));
 		SetCount (count - 1);
 		if (count <= 0) {
