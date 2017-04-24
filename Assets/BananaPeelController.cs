@@ -14,8 +14,8 @@ public class BananaPeelController : MonoBehaviour {
 			Vector2 v = rb.velocity;
 			float x = v.x;
 
-			Vector2 newVel = new Vector2 (x < 0 ? Mathf.Clamp (x * 10, -20f, -2f) : Mathf.Clamp (x * 10, 2f, 20f), 0);
-			rb.AddForce (newVel, ForceMode2D.Impulse);
+			Vector2 newVel = new Vector2 (x < 0 ? Mathf.Clamp (x * 10, -10f, -2f) : Mathf.Clamp (x * 10, 2f, 10f), 0);
+			col.gameObject.SendMessage ("KnockBack", newVel);
 		}
 	}
 
