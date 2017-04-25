@@ -16,13 +16,16 @@ public class PickupController : MonoBehaviour {
 	public void OnTriggerEnter2D(Collider2D col) {
 		if (Time.time < startTime + dontPickupTime)
 			return;
+		bool addedItem = false;
 		switch (col.gameObject.tag) {
 		case "Player":
 			foreach (Item item in itemsToGet) {
-				col.gameObject.GetComponent<InventoryController> ().AddItem (item);
+				addedItem = col.gameObject.GetComponent<InventoryController> ().AddItem (item);
 			}
-			Destroy (gameObject);
 			break;
+		}
+		if (addedItem) {
+			Destroy (gameObject);
 		}
 	}
 
