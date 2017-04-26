@@ -13,11 +13,6 @@ public class TileMapController : MonoBehaviour {
 		FillWithWalls ();
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	void FillWithWalls() {
 		for (int x = 0; x < map.width; x++) {
