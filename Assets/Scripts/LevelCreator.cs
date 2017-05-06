@@ -12,6 +12,7 @@ using Vaults;
 using Delaunay;
 using Delaunay.Geo;
 
+using TileMap;
 public class LevelCreator : MonoBehaviour {
 
 	GameObject player;
@@ -122,7 +123,7 @@ public class LevelCreator : MonoBehaviour {
 				currentYCheck--;
 			}
 		}
-		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1);
+		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1.5f);
 		player.transform.position = newPlayerPos;
 		Vector3 boostPos = newPlayerPos;
 		boostPos.z = -2;
@@ -195,7 +196,7 @@ public class LevelCreator : MonoBehaviour {
 
 					bool spawnedEnemy = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
-						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -2), Quaternion.identity);
+						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -2), Quaternion.identity);
 						enemies.Add (newEnemy);
 						spawnedEnemy = true;
 					}
@@ -210,7 +211,7 @@ public class LevelCreator : MonoBehaviour {
 					//					bool spawnedTrap = false;
 					if (!spawnedSpike && room != entranceRoom && Random.value < level.chanceToSpawnTrap) {
 						//						spawnedTrap = true;
-						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -1), Quaternion.identity);
 					}
 
 					bool spawnedDeco = false;
@@ -218,7 +219,7 @@ public class LevelCreator : MonoBehaviour {
 						spawnedDeco = true;
 						GameObject newDeco = GameObject.Instantiate (
 							level.groundDecorations [Random.Range (0, level.groundDecorations.Length)],
-							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2),
+							new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -1),
 							Quaternion.identity
 						);
 						if (Random.value > 0.5) {
@@ -231,7 +232,7 @@ public class LevelCreator : MonoBehaviour {
 					if (!spawnedDeco && Random.value < level.chanceToSpawnTreasure) {
 						GameObject newDeco = GameObject.Instantiate (
 							level.treasure [Random.Range (0, level.treasure.Length)],
-							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1),
+							new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -1),
 							Quaternion.identity
 						);
 						print ("Spawned treasure");

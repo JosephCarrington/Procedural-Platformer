@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Utils;
+using TileMap;
 
 public class PlayerController : MonoBehaviour {
 

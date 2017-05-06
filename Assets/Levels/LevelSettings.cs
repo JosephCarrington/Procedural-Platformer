@@ -54,4 +54,7 @@ public class LevelSettings : ScriptableObject {
 	[Range(0f, 1f)]
 	public float chanceToSpawnTreasure = 0.01f;
 	public GameObject[] treasure;
+
+	[Header("TileSet")]
+	public int firstTileId = 0;
 }

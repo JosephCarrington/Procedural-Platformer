@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using TileMap;
 
 public class RockfallTrapController : MonoBehaviour {
 

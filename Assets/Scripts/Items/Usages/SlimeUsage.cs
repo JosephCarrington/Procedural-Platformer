@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inventory;
 using Utils;
+using TileMap;
 public class SlimeUsage : Usage {
 	TileMapController controller;
 	public int slimeRadius = 1;
