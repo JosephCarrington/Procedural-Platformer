@@ -59,37 +59,45 @@ namespace TileMap {
 
 		public void CreateVaultInRoom(Vault v, Room r) {
 			uint[,] tileInts = v.tileInts;
+			uint[,] spikeInts = v.spikeInts;
 
 
 
-			for (int x = 0; x < tileInts.GetLength(0); x++) {
-				for (int y = 0; y < tileInts.GetLength(1); y++) {
+			for (int x = 0; x < tileInts.GetLength (0); x++) {
+				for (int y = 0; y < tileInts.GetLength (1); y++) {
 					uint rawTile = tileInts [x, y];
 					int tile = (int)(rawTile & ~(0xE0000000)); // ignore flipping and rotating
-					Coordinates newCoords = new Coordinates (x, tileInts.GetLength(0) - 1 - y);
+					// Tiled add's a 1 to the tile so that 0 can be blank
+					tile--;
+					Coordinates newCoords = new Coordinates (x, tileInts.GetLength (0) - 1 - y);
 					newCoords.x += r.pos.x;
 					newCoords.y += r.pos.y;
-					newCoords.x -= r.size.x / 4;
-	//				newCoords.y -= r.size.y;
-					newCoords.y -= r.size.y / 4;
+					newCoords.x -= r.size.x / 2;
+					//				newCoords.y -= r.size.y;
+					newCoords.y -= r.size.y / 2;
 
-					int layer = 0;
-					switch (tile) {
-					case 5:
-					case 6:
-					case 7:
-					case 8:
-						CreateWallTileAt(newCoords);
-						break;
-					case 9:
-						break;
-					case 11: 
-						if(!IsWallAtCoords(newCoords)) {
-							CreateSpikeAt (newCoords);
-						}
-						break;
-					default:
-						break;
+					if (tile != -1) {
+						
+						map.SetTile (newCoords.x, newCoords.y, wallLayer, tile);
+					}
+				}
+			}
+			for (int x = 0; x < spikeInts.GetLength (0); x++) {
+				for (int y = 0; y < spikeInts.GetLength (1); y++) {
+					uint rawTile = spikeInts [x, y];
+					int tile = (int)(rawTile & ~(0xE0000000)); // ignore flipping and rotating
+					// Tiled add's a 1 to the tile so that 0 can be blank
+					tile--;
+					Coordinates newCoords = new Coordinates (x, tileInts.GetLength (0) - 1 - y);
+					newCoords.x += r.pos.x;
+					newCoords.y += r.pos.y;
+					newCoords.x -= r.size.x / 2;
+					//				newCoords.y -= r.size.y;
+					newCoords.y -= r.size.y / 2;
+
+					if (tile == spikeTile) {
+
+						map.SetTile (newCoords.x, newCoords.y, spikeLayer, tile);
 					}
 
 					// Set tile flags
@@ -100,7 +108,7 @@ namespace TileMap {
 					if (flipDiagonal) tileFlags |= (tk2dTileFlags.Rot90 | tk2dTileFlags.FlipX);
 					if (flipHorizontal) tileFlags ^= tk2dTileFlags.FlipX;
 					if (flipVertical) tileFlags ^= tk2dTileFlags.FlipY;
-					map.SetTileFlags(newCoords.x, newCoords.y, 0, tileFlags);
+					map.SetTileFlags(newCoords.x, newCoords.y, spikeLayer, tileFlags);
 				}
 			}
 		}
@@ -230,19 +238,20 @@ namespace TileMap {
 		}
 
 		public int spikeTile = 256;
+		public int spikeLayer = 4;
 		public void CreateSpikeAt(Coordinates c) {
-//			map.SetTile (c.x, c.y, 1, spikeTile);
+			map.SetTile (c.x, c.y, spikeLayer , spikeTile);
 		}
 		public void CreateSpikeAt(Coordinates c, TileDirection d) {
-//			tk2dTileFlags tileFlags = 0;
-//			map.SetTile (c.x, c.y, 1, spikeTile);
-//			switch (d) {
-//			case TileDirection.Down:
-//				tileFlags ^= tk2dTileFlags.FlipY;
-//				break;
-//			}
-//			map.SetTileFlags(c.x, c.y, 1, tileFlags);
-//
+			tk2dTileFlags tileFlags = 0;
+			map.SetTile (c.x, c.y, spikeLayer, spikeTile);
+			switch (d) {
+			case TileDirection.Down:
+				tileFlags ^= tk2dTileFlags.FlipY;
+				break;
+			}
+			map.SetTileFlags(c.x, c.y, spikeLayer, tileFlags);
+
 		}
 
 		public int slimeLayer = 4;
@@ -266,6 +275,15 @@ namespace TileMap {
 		}
 
 		public void Build() {
+
+			map.Build ();
+			// MAy be able to do this before first build
+			// Make marching squares
+
+
+		}
+
+		public void MarchSquares() {
 			// Build our bool map first
 			bool[,] walls = new bool[map.width, map.height];
 			for (int x = 0; x < map.width; x++) {
@@ -279,7 +297,7 @@ namespace TileMap {
 			}
 			for (int x = 0; x < map.width; x++) {
 				for (int y = 0; y < map.height; y++) {
-//					 Get the tile neighbors and assign a tile based on that. Levels grow outwards from wall tiles already placed
+					//					 Get the tile neighbors and assign a tile based on that. Levels grow outwards from wall tiles already placed
 					TileNeighbors ns = GetSurroundingTiles(new Coordinates(x, y), walls);
 					if (!ns.C) {
 						// Empty tile
@@ -324,11 +342,6 @@ namespace TileMap {
 					}
 				}
 			}
-			map.Build ();
-			// MAy be able to do this before first build
-			// Make marching squares
-
-
 		}
 
 		public void SetTileIfNotSet(int x, int y, int layer, int tileId) {

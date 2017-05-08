@@ -132,14 +132,15 @@ public class LevelCreator : MonoBehaviour {
 			GameObject.Instantiate (boostPrefab, boostPos, Quaternion.identity);
 		}
 
-
+		// Marching squares here, as from now on we will be dealing with vaults
+		map.MarchSquares ();
 		foreach (Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			//			 Check to fill with vault
 			bool madeVault = false;
 			if (room != entranceRoom && Random.value < level.chanceToPlaceVault) {
 				foreach (Vault v in floatingVaults) {
-					if (v.size.x <= room.size.x && v.size.y <= room.size.y) {
+					if (v.size.x <= room.size.x - 2 && v.size.y <= room.size.y - 2) {
 						v.ParseCSV ();
 						room.vault = v;
 						floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
@@ -152,6 +153,7 @@ public class LevelCreator : MonoBehaviour {
 
 			if (madeVault) {
 			}
+
 
 			if (!madeVault && Random.value < level.chanceToAttemptLava) {
 				if(room != entranceRoom) {
@@ -191,8 +193,8 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 
-			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
-				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+			for(int x = room.bottomLeft.x + 1; x < room.bottomRight.x - 1; x++) {
+				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y + 1))) {
 
 					bool spawnedEnemy = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
@@ -241,7 +243,7 @@ public class LevelCreator : MonoBehaviour {
 			}
 			// Top Spikes
 			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
-				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
+				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y -1))) {
 					//					bool spawnedSpike = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
 						//						spawnedSpike = true;
