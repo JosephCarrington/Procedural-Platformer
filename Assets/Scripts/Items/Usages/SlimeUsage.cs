@@ -17,7 +17,7 @@ public class SlimeUsage : Usage {
 	public override void UseAtPosition(Vector2 position) {
 		for (float x = position.x - slimeRadius; x <= position.x + slimeRadius; x++) {
 			for (float y = position.y - slimeRadius; y <= position.y + slimeRadius; y++) {
-				TileMapController.TileInfo tile = controller.GetTileAtPosition(new Vector2(x, y));
+				TileMapController.TileInfo tile = controller.GetTileAtPosition(new Vector2(x, y), TileMapController.TileLayer.Floor);
 				if(tile.type == TileMapController.TileType.Wall) {
 					controller.CreateSlimeAt(new Coordinates(Mathf.RoundToInt(x + Utils.Utils.mapSize.x / 2), Mathf.RoundToInt(y + Utils.Utils.mapSize.y / 2)));
 				}

@@ -145,37 +145,43 @@ namespace TileMap {
 			);
 
 		}
-		public TileInfo GetTileAtPosition(Vector2 pos) {
+		public TileInfo GetTileAtPosition(Vector2 pos, TileLayer l) {
 			int x, y, tileId = -1;
 			TileDirection dir = TileDirection.Up;
 			if (map.GetTileAtPosition (pos, out x, out y)) {		
 				// Default to spike
-				tileId = map.GetTile(x, y, 0);
+				tileId = map.GetTile(x, y, (int)l);
 				if (tileId != -1) {
 
 				}
 			}
-			tk2dTileFlags flags = map.GetTileFlags(x, y, 0);
+			tk2dTileFlags flags = map.GetTileFlags(x, y, (int)l);
 			dir = (TileFlagsToTileDirection (flags));
 
 			TileInfo tile = new TileInfo ();
-	//		switch (tileId) {
-	//		case 4:
-	//		case 5:
-	//		case 6:
-	//		case 7:
-	//			tile.type = TileType.Wall;
-	//			break;
-	//		case 8:
-	//			tile.type = TileType.Lava;
-	//			break;
-	//		case spikeTile:
-	//			tile.type = TileType.Spike;
-	//			break;
-	//		default:
-	//			tile.type = TileType.Empty;
-	//			break;
-	//		}
+			switch (tileId) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+			case 36:
+			case 64:
+			case 65:
+			case 66:
+				tile.type = TileType.Wall;
+				break;
+			case 8:
+				tile.type = TileType.Lava;
+				break;
+			default:
+				tile.type = TileType.Empty;
+				break;
+			}
 			if (tileId == spikeTile) {
 				tile.type = TileType.Spike;
 			}
@@ -243,7 +249,7 @@ namespace TileMap {
 		public void CreateSlimeAt(Coordinates c) {
 	//		CreateEmptyTileAt (c);
 			map.SetTile (c.x, c.y, slimeLayer, 12);
-			Build ();
+//			Build ();
 		}
 		public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
 	//		Color lineColor = a.x != b.x ? Color.red : Color.blue;
@@ -264,7 +270,7 @@ namespace TileMap {
 			bool[,] walls = new bool[map.width, map.height];
 			for (int x = 0; x < map.width; x++) {
 				for (int y = 0; y < map.height; y++) {
-					if (TileExists (new Coordinates (x, y), wallLayer)) {
+					if (BaseWallExists (new Coordinates (x, y))) {
 						walls [x, y] = true;
 					} else {
 						walls [x, y] = false;
@@ -280,40 +286,40 @@ namespace TileMap {
 						if (ns.S) {
 							if (ns.E) {
 								if (ns.NE && ns.SW && ns.SE) {
-									map.SetTile (x, y, wallLayer, 3);
+									SetTileIfNotSet (x, y, wallLayer, 3);
 								} else {
-									map.SetTile (x, y, wallLayer, 0);
+									SetTileIfNotSet (x, y, wallLayer, 0);
 								}
 							} else if (ns.W) {
-								map.SetTile (x, y, wallLayer, 4);
+								SetTileIfNotSet (x, y, wallLayer, 4);
 
 							} else {
-								map.SetTile (x, y, wallLayer, 1);
+								SetTileIfNotSet (x, y, wallLayer, 1);
 							}
 						} else if (ns.E) {
 							if (ns.N) {
-								map.SetTile (x, y, wallLayer, 35);
+								SetTileIfNotSet (x, y, wallLayer, 35);
 
 							} else {
-								map.SetTile (x, y, wallLayer, 32);
+								SetTileIfNotSet (x, y, wallLayer, 32);
 							}
 						} else if (ns.W) {
 							if (ns.N) {
-								map.SetTile (x, y, wallLayer, 36);
+								SetTileIfNotSet (x, y, wallLayer, 36);
 
 							} else {
-								map.SetTile (x, y, wallLayer, 34);
+								SetTileIfNotSet (x, y, wallLayer, 34);
 							}
 						} else if (ns.N) {
-							map.SetTile (x, y, wallLayer, 65);
+							SetTileIfNotSet (x, y, wallLayer, 65);
 						} else if (ns.NE) {
-							map.SetTile (x, y, wallLayer, 64);
+							SetTileIfNotSet (x, y, wallLayer, 64);
 						} else if (ns.SE) {
-							map.SetTile (x, y, wallLayer, 0);
+							SetTileIfNotSet (x, y, wallLayer, 0);
 						} else if (ns.NW) {
-							map.SetTile (x, y, wallLayer, 66);
+							SetTileIfNotSet (x, y, wallLayer, 66);
 						} else if (ns.SW) {
-							map.SetTile (x, y, wallLayer, 2);
+							SetTileIfNotSet (x, y, wallLayer, 2);
 						}
 					}
 				}
@@ -323,6 +329,13 @@ namespace TileMap {
 			// Make marching squares
 
 
+		}
+
+		public void SetTileIfNotSet(int x, int y, int layer, int tileId) {
+			int currentTile = map.GetTile (x, y, layer);
+			if (currentTile != tileId) {
+				map.SetTile (x, y, layer, tileId);
+			}
 		}
 
 		public enum TileLayer {
@@ -375,6 +388,16 @@ namespace TileMap {
 			}
 		}
 
+		bool BaseWallExists(Coordinates c) {
+			if (c.x < 0 || c.x >= map.width || c.y < 0 || c.y >= map.height) {
+				return false;
+			}
+			int t = map.GetTile (c.x, c.y, wallLayer);
+			if (t == 33) {
+				return true;
+			}
+			return false;
+		}
 
 		bool TileExists(Coordinates c, bool[,] boolMap) {
 			if (c.x < 0 || c.x >= boolMap.GetLength(0) || c.y < 0 || c.y >= boolMap.GetLength(1)) {

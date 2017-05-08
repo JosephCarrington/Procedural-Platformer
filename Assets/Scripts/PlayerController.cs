@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		// Check for spikes
-		TileMapController.TileInfo tile = map.GetTileAtPosition(transform.position);
+		TileMapController.TileInfo tile = map.GetTileAtPosition(transform.position, TileMapController.TileLayer.Floor);
 		if (tile.type == TileMapController.TileType.Spike) {
 			Vector2 v = gameObject.GetComponent<Rigidbody2D> ().velocity;
 			float maxV = 1f;
