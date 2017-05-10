@@ -252,11 +252,14 @@ namespace TileMap {
 
 		}
 
-		public int slimeLayer = 4;
+		public int slimeLayer = 3;
+		public int slimeOffset = 5;
 		public void CreateSlimeAt(Coordinates c) {
-	//		CreateEmptyTileAt (c);
-			map.SetTile (c.x, c.y, slimeLayer, 12);
-//			Build ();
+			int oldTile = map.GetTile(c.x, c.y, wallLayer);
+			CreateEmptyTileAt (c);
+			if (oldTile != -1) {
+				map.SetTile (c.x, c.y, slimeLayer, oldTile + slimeOffset);
+			}
 		}
 		public bool DoesContinuousWallExist(Coordinates a, Coordinates b) {
 	//		Color lineColor = a.x != b.x ? Color.red : Color.blue;

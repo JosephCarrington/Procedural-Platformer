@@ -23,5 +23,6 @@ public class SlimeUsage : Usage {
 				}
 			}
 		}
+		controller.Build ();
 	}
 }
