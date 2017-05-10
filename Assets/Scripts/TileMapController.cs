@@ -301,11 +301,7 @@ namespace TileMap {
 						// Empty tile
 						if (ns.S) {
 							if (ns.E) {
-								if (ns.NE && ns.SW && ns.SE) {
-									SetTileIfNotSet (x, y, wallLayer, 3);
-								} else {
-									SetTileIfNotSet (x, y, wallLayer, 0);
-								}
+								SetTileIfNotSet (x, y, wallLayer, 3);
 							} else if (ns.W) {
 								SetTileIfNotSet (x, y, wallLayer, 4);
 
