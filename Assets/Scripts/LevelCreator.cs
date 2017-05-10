@@ -12,6 +12,7 @@ using Vaults;
 using Delaunay;
 using Delaunay.Geo;
 
+using TileMap;
 public class LevelCreator : MonoBehaviour {
 
 	GameObject player;
@@ -122,7 +123,7 @@ public class LevelCreator : MonoBehaviour {
 				currentYCheck--;
 			}
 		}
-		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1);
+		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 2.5f);
 		player.transform.position = newPlayerPos;
 		Vector3 boostPos = newPlayerPos;
 		boostPos.z = -2;
@@ -131,14 +132,15 @@ public class LevelCreator : MonoBehaviour {
 			GameObject.Instantiate (boostPrefab, boostPos, Quaternion.identity);
 		}
 
-
+		// Marching squares here, as from now on we will be dealing with vaults
+		map.MarchSquares ();
 		foreach (Transform child in transform) {
 			Room room = child.gameObject.GetComponent<Room>();
 			//			 Check to fill with vault
 			bool madeVault = false;
 			if (room != entranceRoom && Random.value < level.chanceToPlaceVault) {
 				foreach (Vault v in floatingVaults) {
-					if (v.size.x <= room.size.x && v.size.y <= room.size.y) {
+					if (v.size.x <= room.size.x - 2 && v.size.y <= room.size.y - 2) {
 						v.ParseCSV ();
 						room.vault = v;
 						floatingVaults = Utils.Utils.ShuffleVaults (floatingVaults);
@@ -151,6 +153,7 @@ public class LevelCreator : MonoBehaviour {
 
 			if (madeVault) {
 			}
+
 
 			if (!madeVault && Random.value < level.chanceToAttemptLava) {
 				if(room != entranceRoom) {
@@ -190,12 +193,12 @@ public class LevelCreator : MonoBehaviour {
 				}
 			}
 
-			for(int x = room.bottomLeft.x; x < room.bottomRight.x; x++) {
-				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y - 1)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y))) {
+			for(int x = room.bottomLeft.x + 1; x < room.bottomRight.x - 1; x++) {
+				if(map.IsWallAtCoords(new Coordinates(x, room.bottomLeft.y)) && !IsWallOrLavaAtCoords(new Coordinates(x, room.bottomLeft.y + 1))) {
 
 					bool spawnedEnemy = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
-						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -2), Quaternion.identity);
+						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -2), Quaternion.identity);
 						enemies.Add (newEnemy);
 						spawnedEnemy = true;
 					}
@@ -210,7 +213,7 @@ public class LevelCreator : MonoBehaviour {
 					//					bool spawnedTrap = false;
 					if (!spawnedSpike && room != entranceRoom && Random.value < level.chanceToSpawnTrap) {
 						//						spawnedTrap = true;
-						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1), Quaternion.identity);
+						GameObject.Instantiate(level.traps[Random.Range(0, level.traps.Length)], new Vector3(x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -1), Quaternion.identity);
 					}
 
 					bool spawnedDeco = false;
@@ -218,7 +221,7 @@ public class LevelCreator : MonoBehaviour {
 						spawnedDeco = true;
 						GameObject newDeco = GameObject.Instantiate (
 							level.groundDecorations [Random.Range (0, level.groundDecorations.Length)],
-							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2),
+							new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -1),
 							Quaternion.identity
 						);
 						if (Random.value > 0.5) {
@@ -231,7 +234,7 @@ public class LevelCreator : MonoBehaviour {
 					if (!spawnedDeco && Random.value < level.chanceToSpawnTreasure) {
 						GameObject newDeco = GameObject.Instantiate (
 							level.treasure [Random.Range (0, level.treasure.Length)],
-							new Vector3 (x - level.mapSize.x / 2, room.bottomLeft.y - level.mapSize.y / 2, -1),
+							new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -1),
 							Quaternion.identity
 						);
 						print ("Spawned treasure");
@@ -240,7 +243,7 @@ public class LevelCreator : MonoBehaviour {
 			}
 			// Top Spikes
 			for (int x = room.topLeft.x; x < room.topRight.x; x++) {
-				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y + 1)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y))) {
+				if (map.IsWallAtCoords (new Coordinates (x, room.topLeft.y)) && !IsWallOrLavaAtCoords (new Coordinates (x, room.topLeft.y -1))) {
 					//					bool spawnedSpike = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnSpike) {
 						//						spawnedSpike = true;

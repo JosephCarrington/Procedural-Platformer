@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Utils;
+using TileMap;
 
 public class PlayerController : MonoBehaviour {
 
@@ -66,7 +67,8 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		// Check for spikes
-		TileMapController.TileInfo tile = map.GetTileAtPosition(transform.position);
+		TileMapController.TileInfo tile = map.GetTileAtPosition(new Vector2(transform.position.x, transform.position.y) + gameObject.GetComponent<Rigidbody2D>().velocity.normalized, TileMapController.TileLayer.Spike);
+		Debug.DrawLine (transform.position, tile.worldPos, Color.red);
 		if (tile.type == TileMapController.TileType.Spike) {
 			Vector2 v = gameObject.GetComponent<Rigidbody2D> ().velocity;
 			float maxV = 1f;
