@@ -123,7 +123,7 @@ public class LevelCreator : MonoBehaviour {
 				currentYCheck--;
 			}
 		}
-		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 1.5f);
+		Vector2 newPlayerPos = new Vector2 (playerPos.x - (level.mapSize.x / 2), currentYCheck - (level.mapSize.y / 2) + 2.5f);
 		player.transform.position = newPlayerPos;
 		Vector3 boostPos = newPlayerPos;
 		boostPos.z = -2;

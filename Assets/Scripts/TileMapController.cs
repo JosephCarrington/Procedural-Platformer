@@ -97,7 +97,7 @@ namespace TileMap {
 
 					if (tile == spikeTile) {
 
-						map.SetTile (newCoords.x, newCoords.y, spikeLayer, tile);
+						map.SetTile (newCoords.x, newCoords.y, (int)TileLayer.Spike, tile);
 					}
 
 					// Set tile flags
@@ -108,7 +108,7 @@ namespace TileMap {
 					if (flipDiagonal) tileFlags |= (tk2dTileFlags.Rot90 | tk2dTileFlags.FlipX);
 					if (flipHorizontal) tileFlags ^= tk2dTileFlags.FlipX;
 					if (flipVertical) tileFlags ^= tk2dTileFlags.FlipY;
-					map.SetTileFlags(newCoords.x, newCoords.y, spikeLayer, tileFlags);
+					map.SetTileFlags(newCoords.x, newCoords.y, (int)TileLayer.Spike, tileFlags);
 				}
 			}
 		}
@@ -145,6 +145,7 @@ namespace TileMap {
 		public class TileInfo {
 			public TileType type;
 			public TileDirection direction;
+			public Vector3 worldPos;
 		}
 
 		public Coordinates PositionToCoordinates(Vector2 pos) {
@@ -157,16 +158,13 @@ namespace TileMap {
 			int x, y, tileId = -1;
 			TileDirection dir = TileDirection.Up;
 			if (map.GetTileAtPosition (pos, out x, out y)) {		
-				// Default to spike
 				tileId = map.GetTile(x, y, (int)l);
-				if (tileId != -1) {
-
-				}
 			}
 			tk2dTileFlags flags = map.GetTileFlags(x, y, (int)l);
 			dir = (TileFlagsToTileDirection (flags));
 
 			TileInfo tile = new TileInfo ();
+			tile.worldPos = map.GetTilePosition (x, y);
 			switch (tileId) {
 			case 0:
 			case 1:
@@ -193,6 +191,7 @@ namespace TileMap {
 			if (tileId == spikeTile) {
 				tile.type = TileType.Spike;
 			}
+			print (tile.type);
 			tile.direction = dir;
 			return tile;
 		}
@@ -234,23 +233,22 @@ namespace TileMap {
 			map.SetTile (c.x, c.y, wallLayer, 33);
 		}
 		public void CreateDebugTileAt(Coordinates c) {
-			map.SetTile (c.x, c.y, wallLayer, 15);
+			map.SetTile (c.x, c.y, 3, 1023);
 		}
 
 		public int spikeTile = 256;
-		public int spikeLayer = 4;
 		public void CreateSpikeAt(Coordinates c) {
-			map.SetTile (c.x, c.y, spikeLayer , spikeTile);
+			map.SetTile (c.x, c.y, (int)TileLayer.Spike , spikeTile);
 		}
 		public void CreateSpikeAt(Coordinates c, TileDirection d) {
 			tk2dTileFlags tileFlags = 0;
-			map.SetTile (c.x, c.y, spikeLayer, spikeTile);
+			map.SetTile (c.x, c.y, (int)TileLayer.Spike, spikeTile);
 			switch (d) {
 			case TileDirection.Down:
 				tileFlags ^= tk2dTileFlags.FlipY;
 				break;
 			}
-			map.SetTileFlags(c.x, c.y, spikeLayer, tileFlags);
+			map.SetTileFlags(c.x, c.y, (int)TileLayer.Spike, tileFlags);
 
 		}
 
@@ -355,7 +353,8 @@ namespace TileMap {
 			BG = 0,
 			Floor = 2,
 			Lava = 1,
-			Effects = 3
+			Effects = 3,
+			Spike = 4
 		}
 
 
