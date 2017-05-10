@@ -55,7 +55,14 @@ namespace Utils {
 			va.minDepth = minDepth;
 			va.maxDepth = maxDepth;
 			va.size = size;
-			va.csv = b.ToString();
+			va.wallCsv = b.ToString();
+//			va.spikeCsv 
+			csv = root.GetElementsByTagName("data")[1].InnerText;
+			b = new StringBuilder (csv);
+			b.Replace ("\r", "").Replace ("\n", "");
+			va.spikeCsv = csv.ToString ();
+			
+
 
 
 			va.objects = new List<TiledObject> ();

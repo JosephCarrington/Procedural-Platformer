@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using TileMap;
 
 public class RockfallTrapController : MonoBehaviour {
 
@@ -27,7 +28,7 @@ public class RockfallTrapController : MonoBehaviour {
 		for (int y = 1; y < maxHeightCheck; y++) {
 			Vector2 checkPos = gameObject.transform.position;
 			checkPos.y += y;
-			TileMapController.TileInfo tile = mapController.GetTileAtPosition (checkPos);
+			TileMapController.TileInfo tile = mapController.GetTileAtPosition (checkPos, TileMapController.TileLayer.Floor);
 			if (y <= minHeightCheck) {
 				if (tile.type == TileMapController.TileType.Empty) {
 					continue;
@@ -37,7 +38,7 @@ public class RockfallTrapController : MonoBehaviour {
 			} else if (y <= maxHeightCheck) {
 				if (tile.type == TileMapController.TileType.Wall) {
 					madeTrap = true;
-					SetTopOffset (y - 1);
+					SetTopOffset (y);
 					break;
 				}
 			}
@@ -45,7 +46,8 @@ public class RockfallTrapController : MonoBehaviour {
 		if (!madeTrap) {
 			print ("Trap not made");
 			Destroy (gameObject);
-		}
+		} else
+			print ("Trap made");
 
 	}
 	
