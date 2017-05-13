@@ -312,6 +312,7 @@ public class PlayerController : MonoBehaviour {
 
 	IEnumerator ReloadScene(){
 		yield return new WaitForSeconds (knockBackControlLoss);
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+//		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		SceneManager.LoadScene("Title Screen");
 	}
 }

@@ -13,9 +13,14 @@ public class HPController : MonoBehaviour {
 	}
 	void TakeDamage(int amount) {
 		hp -= amount;
-		gameObject.GetComponent<SpriteRenderer> ().color = hurtColor;
-		gameObject.GetComponent<ParticleSystem> ().Play ();
-		StartCoroutine(ChangeColorBack(0.25f));
+		if (gameObject.GetComponent<SpriteRenderer> () != null) {
+			gameObject.GetComponent<SpriteRenderer> ().color = hurtColor;
+			StartCoroutine(ChangeColorBack(0.25f));
+
+		}
+		if (gameObject.GetComponent<ParticleSystem> () != null) {
+			gameObject.GetComponent<ParticleSystem> ().Play ();
+		}
 
 		if (hp < 1) {
 			gameObject.SendMessage ("Die");
