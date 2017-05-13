@@ -45,7 +45,7 @@ public class LevelSettings : ScriptableObject {
 	[Header("Enemies")]
 	[Range(0f, 1f)]
 	public float chanceToSpawnEnemy = 0.1f;
-	public GameObject[] enemies;
+	public WeightedSpawn[] enemies;
 
 	[Header("Exit")]
 	public GameObject exit;
@@ -57,4 +57,27 @@ public class LevelSettings : ScriptableObject {
 
 	[Header("TileSet")]
 	public int firstTileId = 0;
+
+	public void Awake() {
+		
+	}
+	public GameObject GetEnemy() {
+		GameObject enemy = null;
+		float totalSum = 0f;
+		foreach (WeightedSpawn spawn in enemies) {
+			totalSum += spawn.weight;
+		}
+		float roll = Random.Range (0, totalSum);
+		float amountLeft = roll;
+		foreach (WeightedSpawn spawn in enemies) {
+			if (amountLeft > spawn.weight) {
+				amountLeft -= spawn.weight;
+			} else {
+				enemy = spawn.prefab;
+				break;
+			}
+			
+		}
+		return enemy;
+	}
 }

@@ -198,7 +198,7 @@ public class LevelCreator : MonoBehaviour {
 
 					bool spawnedEnemy = false;
 					if (room != entranceRoom && Random.value < level.chanceToSpawnEnemy) {
-						GameObject newEnemy = GameObject.Instantiate (level.enemies [Random.Range(0, level.enemies.Length)], new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -2), Quaternion.identity);
+						GameObject newEnemy = GameObject.Instantiate (level.GetEnemy(), new Vector3 (x - level.mapSize.x / 2, (room.bottomLeft.y - level.mapSize.y / 2) + 0.5f, -2), Quaternion.identity);
 						enemies.Add (newEnemy);
 						spawnedEnemy = true;
 					}
