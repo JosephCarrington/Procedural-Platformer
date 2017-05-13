@@ -13,7 +13,18 @@ public class ChudController : MonoBehaviour {
 	}
 
 	public void Die() {
-		GameObject.Destroy (gameObject.GetComponent<Rigidbody2D> ());
+		gameObject.GetComponent<Rigidbody2D> ().AddTorque (20f);
+		gameObject.GetComponent<Rigidbody2D> ().constraints = RigidbodyConstraints2D.None;
 		gameObject.GetComponent<Animator> ().SetTrigger ("Die");
+	}
+
+	public void Destroy() {
+		DestroyInSeconds (5f);
+	}
+
+	IEnumerator DestroyInSeconds(float s) {
+		yield return new WaitForSeconds (s);
+		GameObject.Destroy (gameObject);
+
 	}
 }
